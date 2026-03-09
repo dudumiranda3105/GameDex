@@ -780,6 +780,25 @@
   color: #d0d8e9;
 }
 
+.footer {
+  margin-top: auto;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(180deg, rgba(8, 8, 11, 0.96) 0%, rgba(5, 5, 7, 0.98) 100%);
+}
+
+.footer-content {
+  width: min(1280px, 94%);
+  margin: 0 auto;
+  padding: 1.1rem 0 0.9rem;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr;
+  gap: 1.1rem;
+  margin-bottom: 0.9rem;
+}
+
 
 .footer-brand {
   font-weight: 700;
