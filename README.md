@@ -128,6 +128,55 @@ src/
 
 ---
 
+## 🏗️ Arquitetura da Aplicação
+
+```mermaid
+flowchart LR
+  U[Usuário] --> R[React + React Router]
+  R --> P[Pages]
+  P --> C[Components]
+  P --> S[rawgApi service]
+  S --> A[RAWG API]
+  R --> ST[App.css / index.css]
+
+  subgraph Frontend
+    R
+    P
+    C
+    S
+    ST
+  end
+```
+
+---
+
+## 🖼️ Prints da Aplicação
+
+> Dica: salve as imagens em `docs/screenshots/` e atualize os caminhos abaixo.
+
+### Home
+![Home](docs/screenshots/home.png)
+
+### Busca
+![Busca](docs/screenshots/search.png)
+
+### Detalhes do jogo
+![Detalhes](docs/screenshots/details.png)
+
+### Sobre
+![Sobre](docs/screenshots/about.png)
+
+### App
+![App](docs/screenshots/download.png)
+
+---
+
+## 🔗 Acesso Online
+
+- URL da aplicação: **https://SEU-LINK-DE-DEPLOY-AQUI**
+
+---
+
 ## 📝 Observações
 
 - O projeto depende da variável `VITE_RAWG_API_KEY`.
