@@ -1,60 +1,63 @@
-# GameDex Web
+# 🎮 GameDex Web
 
-Aplicação web feita com React para explorar jogos usando a API da RAWG, com foco em visual moderno, navegação fluida e experiência responsiva.
+Aplicação web para descobrir jogos usando a **RAWG API**, com foco em experiência moderna, animações suaves e visual premium.
 
-## Visão Geral
+---
 
-O GameDex permite:
+## ✨ Destaques
 
-- Descobrir jogos populares por categorias.
-- Pesquisar jogos por nome com filtros.
-- Visualizar detalhes completos de cada jogo.
-- Navegar por uma interface estilizada com animações suaves.
+- Home com seções de jogos em alta.
+- Busca com filtros (gênero, plataforma e ordenação).
+- Página completa de detalhes com estatísticas e screenshots.
+- Layout responsivo com sidebar, header e footer refinados.
+- Skeleton loading para carregamento visualmente agradável.
 
-## Funcionalidades Atuais
+---
 
-- **Home** com seções de destaque:
-	- Trending Games
-	- Top Rated
-	- Lançamentos
-- **Busca de jogos** com:
-	- termo de pesquisa
-	- filtro por gênero
-	- filtro por plataforma
-	- ordenação de resultados
-- **Detalhes do jogo** (`/game/:id`) com:
-	- capa, nota, metacritic e estatísticas
-	- descrição rica
-	- informações técnicas (desenvolvedor, publicadora, classificação, etc.)
-	- screenshots
-- **Página Sobre** (`/about`) com visão do projeto e stack.
-- **Página App** (`/download`) com links de instalação.
-- **Skeleton loading** para carregamento mais elegante (Home, Busca e Detalhes).
+## 🚀 Funcionalidades
 
-## Rotas
+### Home (`/`)
+- Seções: **Trending Games**, **Top Rated** e **Lançamentos**.
+- Cards com animações e microinterações.
 
-- `/` — Home
-- `/search` — Busca
-- `/game/:id` — Detalhes do jogo
-- `/download` — App
-- `/about` — Sobre
+### Busca (`/search`)
+- Pesquisa por nome.
+- Filtro por gênero.
+- Filtro por plataforma.
+- Ordenação por relevância, nota, data e popularidade.
 
-## Stack
+### Detalhes (`/game/:id`)
+- Banner/capa do jogo.
+- Nota, Metacritic, tempo médio e avaliações.
+- Bloco de descrição.
+- Informações organizadas (dev, publicadora, classificação etc.).
+- Grid de screenshots.
 
-- React 19
-- Vite 7
-- React Router DOM
-- Axios
-- Framer Motion
-- Tailwind CSS (via plugin Vite)
-- React Icons
+### Outras páginas
+- **Sobre** (`/about`) com visão do projeto e stack.
+- **App** (`/download`) com download de APK e link do repositório.
 
-## API Utilizada
+---
 
-RAWG Video Games Database API  
-Documentação: https://rawg.io/apidocs
+## 🧱 Stack Técnica
 
-Endpoints principais:
+| Camada | Tecnologias |
+|---|---|
+| Front-end | React 19, React Router DOM |
+| Build | Vite 7 |
+| Estilo/UI | CSS custom + Tailwind CSS (plugin Vite) |
+| Animações | Framer Motion |
+| Requisições | Axios |
+| Ícones | React Icons |
+
+---
+
+## 🔌 API
+
+- API: **RAWG Video Games Database**
+- Docs: https://rawg.io/apidocs
+
+### Endpoints usados
 
 - `GET /games`
 - `GET /games?search=...`
@@ -63,7 +66,9 @@ Endpoints principais:
 - `GET /genres`
 - `GET /platforms/lists/parents`
 
-## Configuração Local
+---
+
+## ⚙️ Como rodar localmente
 
 ### 1) Instalar dependências
 
@@ -71,12 +76,12 @@ Endpoints principais:
 npm install
 ```
 
-### 2) Criar arquivo de ambiente
+### 2) Configurar variável de ambiente
 
-Crie um arquivo `.env` na raiz com:
+Crie um arquivo `.env` na raiz:
 
 ```env
-VITE_RAWG_API_KEY=sua_chave_aqui
+VITE_RAWG_API_KEY=sua_chave_rawg
 ```
 
 ### 3) Rodar em desenvolvimento
@@ -85,43 +90,55 @@ VITE_RAWG_API_KEY=sua_chave_aqui
 npm run dev
 ```
 
-### 4) Gerar build de produção
+### 4) Build de produção
 
 ```bash
 npm run build
 ```
 
-### 5) Pré-visualizar build local
+### 5) Pré-visualizar build
 
 ```bash
 npm run preview
 ```
 
-## Scripts
+---
 
-- `npm run dev` — inicia ambiente de desenvolvimento
-- `npm run build` — gera build de produção
-- `npm run preview` — serve a build localmente
-- `npm run lint` — executa lint do projeto
+## 📜 Scripts
 
-## Estrutura Básica
+- `npm run dev` → inicia ambiente de desenvolvimento.
+- `npm run build` → gera versão de produção.
+- `npm run preview` → visualiza build local.
+- `npm run lint` → executa lint do projeto.
+
+---
+
+## 📁 Estrutura do Projeto
 
 ```text
 src/
-	components/
-	pages/
-	services/
-	assets/
-	App.jsx
-	App.css
-	index.css
+  assets/
+  components/
+  pages/
+  services/
+  App.jsx
+  App.css
+  index.css
 ```
 
-## Observações
+---
 
-- A aplicação depende da chave da RAWG (`VITE_RAWG_API_KEY`).
-- Sem chave válida, as listagens não serão carregadas.
+## 📝 Observações
 
-## Deploy
+- O projeto depende da variável `VITE_RAWG_API_KEY`.
+- Sem chave válida, os dados da API não serão carregados.
 
-Recomendado: Vercel ou Netlify.
+---
+
+## 🌐 Deploy
+
+Plataformas recomendadas:
+
+- Vercel
+- Netlify
+
