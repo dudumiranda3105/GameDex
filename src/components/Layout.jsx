@@ -1,8 +1,12 @@
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
+import { LogIn, LogOut, UserRound } from 'lucide-react'
+import { useAuth } from '../hooks/useAuth'
+import { useProfile } from '../hooks/useProfile'
 
-const navItems = [
+const baseNavItems = [
   { to: '/', label: 'Home' },
+  { to: '/library', label: 'Minha biblioteca' },
   { to: '/search', label: 'Busca' },
   { to: '/download', label: 'App' },
   { to: '/about', label: 'Sobre' },
@@ -16,6 +20,11 @@ const pageVariants = {
 
 function Layout() {
   const location = useLocation()
+  const { user, authEnabled, signInWithGoogle, signOut } = useAuth()
+  const { displayName, photoURL } = useProfile()
+  const navItems = user
+    ? [baseNavItems[0], { to: '/profile', label: 'Perfil' }, ...baseNavItems.slice(1)]
+    : baseNavItems
 
   return (
     <div className="app-shell">
@@ -29,6 +38,36 @@ function Layout() {
           <div>
             <div className="brand">GameDex</div>
             <p className="brand-subtitle">Descubra e explore jogos com dados em tempo real</p>
+          </div>
+
+          <div className="topbar-account-area">
+            {authEnabled && user ? (
+              <>
+                <div className="topbar-account-chip">
+                  {photoURL ? (
+                    <img src={photoURL} alt={displayName} className="topbar-avatar" />
+                  ) : (
+                    <span className="topbar-avatar-fallback">
+                      <UserRound size={16} />
+                    </span>
+                  )}
+                  <span>{displayName}</span>
+                </div>
+                <button type="button" className="secondary-btn topbar-auth-btn" onClick={signOut}>
+                  <LogOut size={16} />
+                  Sair
+                </button>
+              </>
+            ) : authEnabled ? (
+              <button type="button" className="primary-btn topbar-auth-btn" onClick={signInWithGoogle}>
+                <LogIn size={16} />
+                Entrar
+              </button>
+            ) : (
+              <div className="topbar-account-chip muted">
+                <span>Login desativado</span>
+              </div>
+            )}
           </div>
         </div>
       </motion.header>
@@ -49,7 +88,7 @@ function Layout() {
           </nav>
           <div className="sidebar-card">
             <p className="sidebar-card-title">Dica rápida</p>
-            <p>Use a página de busca para filtrar por gênero, plataforma e popularidade.</p>
+            <p>Use a aba Perfil para ver os dados da conta e a aba Minha biblioteca para acompanhar progresso e favoritos.</p>
           </div>
         </aside>
 

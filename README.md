@@ -48,6 +48,8 @@ Aplicação web para descobrir jogos usando a **RAWG API**, com foco em experiê
 | Estilo/UI | CSS custom + Tailwind CSS (plugin Vite) |
 | Animações | Framer Motion |
 | Requisições | Axios |
+| Backend | Vercel Functions (Node.js) |
+| Banco/Auth | Firebase (Firestore + Firebase Auth) |
 | Ícones | React Icons |
 
 ---
@@ -82,6 +84,20 @@ Crie um arquivo `.env` na raiz:
 
 ```env
 VITE_RAWG_API_KEY=sua_chave_rawg
+VITE_API_BASE_URL=http://localhost:5173/api
+
+# Firebase Web (frontend)
+VITE_FIREBASE_API_KEY=sua_firebase_api_key
+VITE_FIREBASE_AUTH_DOMAIN=seu-projeto.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=seu_project_id
+VITE_FIREBASE_STORAGE_BUCKET=seu-projeto.firebasestorage.app
+VITE_FIREBASE_MESSAGING_SENDER_ID=1234567890
+VITE_FIREBASE_APP_ID=1:1234567890:web:abcdef123456
+
+# Backend (Vercel/Firebase Admin)
+FIREBASE_PROJECT_ID=seu_project_id
+FIREBASE_CLIENT_EMAIL=firebase-adminsdk-xxxxx@seu-projeto.iam.gserviceaccount.com
+FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nSUA_CHAVE_AQUI\n-----END PRIVATE KEY-----\n"
 ```
 
 ### 3) Rodar em desenvolvimento
@@ -124,6 +140,14 @@ src/
   App.jsx
   App.css
   index.css
+
+api/
+  _lib/
+    firebaseAdmin.js
+    http.js
+  health.js
+  favorites.js
+  library.js
 ```
 
 ---
@@ -190,4 +214,80 @@ Plataformas recomendadas:
 
 - Vercel
 - Netlify
+
+### Deploy na Vercel (front + backend)
+
+1. Suba o repositório para o GitHub.
+2. No painel da Vercel, clique em **Add New > Project**.
+3. Importe o repositório `GameDex`.
+4. Em **Build and Output Settings**, mantenha:
+
+- Build Command: `npm run build`
+- Output Directory: `dist`
+
+5. Em **Environment Variables**, adicione:
+
+- `VITE_RAWG_API_KEY`
+- `VITE_API_BASE_URL` (em produção use `/api`)
+- `FIREBASE_PROJECT_ID`
+- `FIREBASE_CLIENT_EMAIL`
+- `FIREBASE_PRIVATE_KEY`
+
+6. Faça o deploy.
+
+O arquivo `vercel.json` deste projeto ja inclui rewrite para SPA com React Router sem quebrar as rotas.
+
+## 🔐 Backend Firebase
+
+O backend foi criado em funcoes serverless dentro da pasta `api/`:
+
+- `GET /api/health` -> status da API
+- `GET /api/favorites` -> lista favoritos do usuario autenticado
+- `POST /api/favorites` -> salva/atualiza favorito
+- `DELETE /api/favorites?gameId=ID` -> remove favorito
+- `GET /api/library` -> lista biblioteca completa do usuario
+- `POST /api/library` -> salva status, favorito e observacoes
+- `DELETE /api/library?gameId=ID` -> remove item da biblioteca
+
+## 👤 Login e Biblioteca
+
+O frontend agora suporta login com Google via Firebase Auth e uma biblioteca pessoal de jogos.
+
+### O que o usuario pode fazer
+
+- Entrar com Google
+- Favoritar jogos
+- Marcar status: `Quero jogar`, `Jogando`, `Completado`, `Pausado`, `Abandonado`
+- Adicionar observacoes pessoais
+- Ver tudo na rota `/library`
+
+### Configuracao no Firebase Console
+
+1. Crie um app Web no projeto Firebase.
+2. Copie as credenciais do SDK Web para as variaveis `VITE_FIREBASE_*`.
+3. Em **Authentication > Sign-in method**, habilite **Google**.
+4. Em **Authentication > Settings > Authorized domains**, adicione seu dominio da Vercel.
+
+### Como autenticar no backend
+
+1. No frontend (web ou React Native), autentique o usuario via Firebase Auth.
+2. Pegue o ID Token do usuario logado.
+3. Envie no header:
+
+```http
+Authorization: Bearer SEU_ID_TOKEN
+```
+
+### Exemplo de payload do POST /api/favorites
+
+```json
+{
+  "gameId": 3328,
+  "title": "The Witcher 3: Wild Hunt",
+  "coverUrl": "https://...",
+  "rating": 4.67,
+  "released": "2015-05-18",
+  "platforms": ["PC", "PlayStation", "Xbox"]
+}
+```
 

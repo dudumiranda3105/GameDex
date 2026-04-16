@@ -1,15 +1,27 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import { Heart, LogIn, Save, Trash2 } from 'lucide-react'
 import { ErrorState, SkeletonGameDetails } from '../components/FeedbackState'
+import { useAuth } from '../hooks/useAuth'
+import { useLibrary } from '../hooks/useLibrary'
+import { gameStatusOptions } from '../lib/gameLibrary'
 import { fetchGameDetails, fetchGameScreenshots, getImageUrl } from '../services/rawgApi'
 
 function GameDetailsPage() {
   const { id } = useParams()
+  const { user, authEnabled, signInWithGoogle } = useAuth()
+  const { getEntry, saveGameEntry, removeGameEntry, error: libraryError } = useLibrary()
   const [game, setGame] = useState(null)
   const [screenshots, setScreenshots] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
+  const [selectedStatus, setSelectedStatus] = useState('want_to_play')
+  const [notes, setNotes] = useState('')
+  const [isFavorite, setIsFavorite] = useState(false)
+  const [saveFeedback, setSaveFeedback] = useState('')
+
+  const libraryEntry = getEntry(id)
 
   useEffect(() => {
     const loadGameData = async () => {
@@ -32,6 +44,44 @@ function GameDetailsPage() {
 
     loadGameData()
   }, [id])
+
+  useEffect(() => {
+    setSelectedStatus(libraryEntry?.status || 'want_to_play')
+    setNotes(libraryEntry?.notes || '')
+    setIsFavorite(Boolean(libraryEntry?.isFavorite))
+  }, [libraryEntry, id])
+
+  const handleSaveLibraryEntry = async () => {
+    if (!user) {
+      await signInWithGoogle()
+      return
+    }
+
+    try {
+      await saveGameEntry(game, {
+        status: selectedStatus,
+        notes,
+        isFavorite,
+      })
+      setSaveFeedback('Biblioteca atualizada com sucesso.')
+    } catch (saveError) {
+      console.error(saveError)
+      setSaveFeedback('Nao foi possivel salvar suas alteracoes.')
+    }
+  }
+
+  const handleRemoveLibraryEntry = async () => {
+    try {
+      await removeGameEntry(id)
+      setSaveFeedback('Jogo removido da biblioteca.')
+      setSelectedStatus('want_to_play')
+      setNotes('')
+      setIsFavorite(false)
+    } catch (removeError) {
+      console.error(removeError)
+      setSaveFeedback('Nao foi possivel remover este jogo.')
+    }
+  }
 
   if (loading) return <SkeletonGameDetails />
   if (error || !game) return <ErrorState message="Não foi possível carregar os detalhes deste jogo." />
@@ -126,6 +176,85 @@ function GameDetailsPage() {
           </a>
         )}
       </motion.div>
+
+      <motion.section
+        className="section-panel library-control-panel"
+        initial={{ opacity: 0, y: 18 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.45, delay: 0.32 }}
+      >
+        <div className="library-control-header">
+          <div>
+            <p className="sidebar-title">Minha biblioteca</p>
+            <h2 className="section-title">Acompanhe seu progresso neste jogo</h2>
+          </div>
+          {libraryEntry && <span className="library-synced-badge">Sincronizado</span>}
+        </div>
+
+        {!authEnabled ? (
+          <ErrorState message="Configure o Firebase web para liberar login e salvar progresso." />
+        ) : !user ? (
+          <div className="library-login-cta">
+            <p>Entre com Google para salvar este jogo, marcar status e criar sua colecao pessoal.</p>
+            <button type="button" className="primary-btn auth-action-btn" onClick={signInWithGoogle}>
+              <LogIn size={16} />
+              Entrar para salvar
+            </button>
+          </div>
+        ) : (
+          <div className="library-control-grid">
+            <label className="library-field">
+              <span>Status</span>
+              <select value={selectedStatus} onChange={(event) => setSelectedStatus(event.target.value)}>
+                {gameStatusOptions.map((option) => (
+                  <option key={option.value} value={option.value}>{option.label}</option>
+                ))}
+              </select>
+            </label>
+
+            <label className="library-favorite-toggle">
+              <input
+                type="checkbox"
+                checked={isFavorite}
+                onChange={(event) => setIsFavorite(event.target.checked)}
+              />
+              <span>
+                <Heart size={16} fill={isFavorite ? 'currentColor' : 'none'} />
+                Marcar como favorito
+              </span>
+            </label>
+
+            <label className="library-field full-width">
+              <span>Observacoes</span>
+              <textarea
+                value={notes}
+                onChange={(event) => setNotes(event.target.value)}
+                placeholder="Ex: campanha quase no fim, quero testar DLC, coop com amigos..."
+                rows="4"
+              />
+            </label>
+
+            <div className="library-control-actions full-width">
+              <button type="button" className="primary-btn auth-action-btn" onClick={handleSaveLibraryEntry}>
+                <Save size={16} />
+                {libraryEntry ? 'Atualizar biblioteca' : 'Salvar na biblioteca'}
+              </button>
+              {libraryEntry && (
+                <button type="button" className="secondary-btn auth-action-btn" onClick={handleRemoveLibraryEntry}>
+                  <Trash2 size={16} />
+                  Remover
+                </button>
+              )}
+            </div>
+
+            {(saveFeedback || libraryError) && (
+              <p className={saveFeedback?.includes('sucesso') || saveFeedback?.includes('Sincronizado') ? 'state-message success' : 'state-message error'}>
+                {saveFeedback || libraryError}
+              </p>
+            )}
+          </div>
+        )}
+      </motion.section>
 
       <div className="details-content-grid">
         <motion.div
