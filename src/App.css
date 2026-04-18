@@ -1004,10 +1004,39 @@
 }
 
 .download-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.7rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.8rem 1rem;
   align-items: center;
+}
+
+.download-actions-copy {
+  min-width: 0;
+}
+
+.download-actions-copy h2 {
+  margin-bottom: 0.3rem;
+}
+
+.download-actions-copy .download-subtext {
+  margin-bottom: 0;
+}
+
+.download-actions-cta {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.download-actions-cta .primary-btn,
+.download-actions-cta .secondary-btn {
+  min-height: 2.9rem;
+}
+
+.download-actions .download-warning {
+  grid-column: 1 / -1;
 }
 
 .download-note p {
@@ -1025,10 +1054,19 @@
 
 .about-cta {
   text-align: center;
+  display: grid;
+  justify-items: center;
+  gap: 0.55rem;
   border: 1px solid rgba(124, 58, 237, 0.18);
   background: rgba(124, 58, 237, 0.06);
   border-radius: 18px;
   padding: 2rem 1.5rem;
+}
+
+.about-cta-head {
+  display: grid;
+  justify-items: center;
+  gap: 0.2rem;
 }
 
 .about-cta-icon {
@@ -1045,10 +1083,27 @@
   margin-bottom: 0.9rem;
 }
 
+.about-cta-copy {
+  max-width: 760px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
 .about-actions {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.7rem;
-  flex-wrap: wrap;
+  width: min(560px, 100%);
+}
+
+.about-actions .primary-btn,
+.about-actions .secondary-btn {
+  display: inline-flex;
+  align-items: center;
+  width: 100%;
+  min-width: 0;
+  min-height: 3rem;
+  gap: 0.5rem;
   justify-content: center;
 }
 
@@ -1992,28 +2047,46 @@
 
   .topbar-inner {
     width: 100%;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.6rem;
-    align-items: stretch;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.55rem 0.75rem;
+    align-items: center;
   }
 
   .topbar-brand-row {
-    align-items: flex-start;
+    align-items: center;
+    min-width: 0;
+  }
+
+  .brand {
+    font-size: 1.12rem;
   }
 
   .topbar-nav {
+    grid-column: 1 / -1;
     width: 100%;
-    order: 3;
     overflow-x: auto;
     scrollbar-width: thin;
     padding-bottom: 0.15rem;
     flex-wrap: nowrap;
-    justify-content: center;
+    justify-content: flex-start;
   }
 
   .topbar-nav-link {
+    flex: 0 0 auto;
     white-space: nowrap;
+    padding: 0.5rem 0.68rem;
+    font-size: 0.83rem;
+  }
+
+  .topbar-account-area {
+    justify-content: flex-end;
+    gap: 0.45rem;
+  }
+
+  .topbar-auth-btn {
+    padding: 0.62rem 0.78rem;
+    font-size: 0.84rem;
   }
 
   .shell-layout {
@@ -2040,10 +2113,53 @@
     padding: 1rem;
   }
 
-  .topbar-account-area {
-    justify-content: flex-start;
+  .games-grid {
+    grid-template-columns: 1fr;
   }
 
+  .search-form > * {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .search-helper-row {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .search-helper-chips {
+    width: 100%;
+  }
+
+  .details-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .details-actions .secondary-btn,
+  .details-actions .library-popup-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .library-popup {
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .library-popup-body {
+    overflow-y: auto;
+  }
+
+  .download-actions {
+    grid-template-columns: 1fr;
+    align-items: stretch;
+  }
+
+  .download-actions-cta {
+    justify-content: flex-start;
+  }
 }
 
 /* Details page extras */
@@ -2452,6 +2568,10 @@
     grid-template-columns: 1fr;
   }
 
+  .details-stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .library-control-grid {
     grid-template-columns: 1fr;
   }
@@ -2468,6 +2588,28 @@
 
   .profile-status-bar-row {
     grid-template-columns: 90px 1fr 30px;
+  }
+
+  .profile-hero-banner {
+    padding: 1.35rem 1.2rem 1.15rem;
+  }
+
+  .profile-card-header,
+  .profile-info-row,
+  .profile-status-row {
+    align-items: flex-start;
+  }
+
+  .profile-info-row,
+  .profile-status-row {
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .profile-bio-preview,
+  .profile-uid {
+    max-width: none;
+    text-align: left;
   }
 }
 
@@ -2570,6 +2712,78 @@
     grid-template-columns: 1fr;
   }
 
+  .shell-layout,
+  .footer-content {
+    width: 92%;
+  }
+
+  .hero-panel {
+    padding: 0.95rem;
+  }
+
+  .home-stat-card strong {
+    font-size: 1.05rem;
+  }
+
+  .details-header {
+    gap: 0.55rem;
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .details-stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .details-row {
+    padding: 0.55rem 0;
+  }
+
+  .details-value {
+    word-break: break-word;
+  }
+
+  .library-popup-header,
+  .library-popup-body,
+  .library-popup-actions {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .library-popup-actions {
+    flex-direction: column;
+  }
+
+  .profile-stats-row {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-status-bar-row {
+    grid-template-columns: 1fr;
+    gap: 0.35rem;
+  }
+
+  .profile-status-bar-count {
+    text-align: left;
+  }
+
+  .download-actions-cta {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .download-actions-cta .primary-btn,
+  .download-actions-cta .secondary-btn,
+  .about-actions .primary-btn,
+  .about-actions .secondary-btn {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .about-actions {
+    grid-template-columns: 1fr;
+  }
+
   .footer-top {
     grid-template-columns: 1fr;
   }
@@ -2584,6 +2798,46 @@
 
   .about-hero-title {
     font-size: 1.8rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .topbar {
+    padding-left: 0.7rem;
+    padding-right: 0.7rem;
+  }
+
+  .topbar-inner {
+    grid-template-columns: 1fr;
+  }
+
+  .topbar-account-area {
+    justify-content: flex-start;
+  }
+
+  .topbar-avatar,
+  .topbar-avatar-fallback {
+    width: 1.75rem;
+    height: 1.75rem;
+  }
+
+  .content-page h1,
+  .details-page h1 {
+    font-size: 1.42rem;
+  }
+
+  .section-title,
+  .content-page h2 {
+    font-size: 1.02rem;
+  }
+
+  .search-form input,
+  .search-form select,
+  .login-field input,
+  .library-field textarea,
+  .library-popup-field textarea,
+  .library-popup-field select {
+    font-size: 16px;
   }
 }
 
