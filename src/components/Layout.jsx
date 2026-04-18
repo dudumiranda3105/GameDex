@@ -9,8 +9,7 @@ const baseNavItems = [
   { to: '/', label: 'Home' },
   { to: '/library', label: 'Biblioteca' },
   { to: '/search', label: 'Busca' },
-  { to: '/about', label: 'Sobre' },
-  { to: '/download', label: 'App' },
+  { to: '/app', label: 'App' },
 ]
 
 const pageVariants = {
