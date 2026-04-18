@@ -1,25 +1,9 @@
 import { useState } from 'react'
-import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import { FcGoogle } from 'react-icons/fc'
 import { ArrowLeft, LibraryBig, ShieldCheck, Sparkles } from 'lucide-react'
 import { LoadingState } from '../components/FeedbackState'
 import { useAuth } from '../hooks/useAuth'
-
-const cardVariants = {
-  hidden: { opacity: 0, y: 22, scale: 0.985 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    scale: 1,
-    transition: { duration: 0.46, ease: [0.22, 1, 0.36, 1], staggerChildren: 0.06 },
-  },
-}
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 10 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.32 } },
-}
 
 function LoginPage() {
   const navigate = useNavigate()
@@ -86,17 +70,11 @@ function LoginPage() {
 
   return (
     <section className="content-page login-page">
-      <motion.div
-        className="section-panel login-card"
-        variants={cardVariants}
-        initial="hidden"
-        animate="visible"
-        whileHover={{ y: -2 }}
-      >
+      <div className="section-panel login-card">
         <div className="login-visual-glow" />
         <div className="login-visual-glow secondary" />
 
-        <motion.div className="login-card-top" variants={itemVariants}>
+        <div className="login-card-top">
           <button
             type="button"
             className="login-back-link"
@@ -105,15 +83,15 @@ function LoginPage() {
             <ArrowLeft size={15} />
             Voltar
           </button>
-        </motion.div>
+        </div>
 
-        <motion.p className="hero-kicker" variants={itemVariants}>Acesso</motion.p>
-        <motion.h1 variants={itemVariants}>Faça login no GameDex</motion.h1>
-        <motion.p className="login-copy" variants={itemVariants}>
+        <p className="hero-kicker">Acesso</p>
+        <h1>Faça login no GameDex</h1>
+        <p className="login-copy">
           Conecte com Google para sincronizar sua biblioteca, favoritos e perfil entre web e mobile.
-        </motion.p>
+        </p>
 
-        <motion.div className="login-highlights" variants={itemVariants}>
+        <div className="login-highlights">
           <span>
             <LibraryBig size={16} />
             Biblioteca na nuvem
@@ -126,9 +104,9 @@ function LoginPage() {
             <ShieldCheck size={16} />
             Login seguro com Google e Email
           </span>
-        </motion.div>
+        </div>
 
-        <motion.div className="login-actions" variants={itemVariants} layout>
+        <div className="login-actions">
           <div className="login-mode-toggle" role="tablist" aria-label="Modo de autenticacao">
             <button
               type="button"
@@ -146,15 +124,9 @@ function LoginPage() {
             </button>
           </div>
 
-          <motion.form className="login-form" onSubmit={handleSubmit} layout>
+          <form className="login-form" onSubmit={handleSubmit}>
             {mode === 'signup' && (
-              <motion.label
-                className="login-field"
-                htmlFor="displayName"
-                initial={{ opacity: 0, y: -8, height: 0 }}
-                animate={{ opacity: 1, y: 0, height: 'auto' }}
-                transition={{ duration: 0.22 }}
-              >
+              <label className="login-field" htmlFor="displayName">
                 <span>Nome de exibicao</span>
                 <input
                   id="displayName"
@@ -164,7 +136,7 @@ function LoginPage() {
                   placeholder="Como voce quer aparecer no app"
                   autoComplete="name"
                 />
-              </motion.label>
+              </label>
             )}
 
             <label className="login-field" htmlFor="email">
@@ -200,7 +172,7 @@ function LoginPage() {
             >
               {isSubmitting ? 'Aguarde...' : mode === 'signup' ? 'Criar conta' : 'Entrar com email'}
             </button>
-          </motion.form>
+          </form>
 
           {(formError || authError) && <p className="state-message error">{formError || authError}</p>}
 
@@ -225,8 +197,8 @@ function LoginPage() {
               Firebase web nao configurado. Defina as variaveis VITE_FIREBASE_* para liberar login.
             </p>
           )}
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
     </section>
   )
 }
