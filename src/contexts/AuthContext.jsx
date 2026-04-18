@@ -39,6 +39,7 @@ export function AuthProvider({ children }) {
 
   function mapFirebaseAuthError(error) {
     const code = error?.code || ''
+    const currentHost = typeof window !== 'undefined' ? window.location.hostname : ''
 
     if (code === 'auth/invalid-credential' || code === 'auth/wrong-password' || code === 'auth/user-not-found') {
       return 'Email ou senha invalidos.'
@@ -60,6 +61,18 @@ export function AuthProvider({ children }) {
       return 'Login por email/senha desativado no Firebase Console.'
     }
 
+    if (code === 'auth/unauthorized-domain') {
+      return `Dominio nao autorizado no Firebase Auth: ${currentHost || 'dominio atual'}. Adicione em Authentication > Settings > Authorized domains.`
+    }
+
+    if (code === 'auth/popup-blocked') {
+      return 'O navegador bloqueou o popup de login. Libere popups e tente novamente.'
+    }
+
+    if (code === 'auth/popup-closed-by-user') {
+      return 'O popup de login foi fechado antes da autenticacao.'
+    }
+
     return 'Nao foi possivel autenticar agora. Tente novamente.'
   }
 
@@ -77,7 +90,7 @@ export function AuthProvider({ children }) {
       await signInWithPopup(auth, provider)
     } catch (error) {
       console.error(error)
-      setAuthError('Nao foi possivel entrar com Google.')
+      setAuthError(mapFirebaseAuthError(error))
     }
   }
 
