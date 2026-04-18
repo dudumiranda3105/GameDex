@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion'
 
 const apkDownloadUrl = 'https://example.com/gamedex.apk'
-const repositoryUrl = 'https://github.com/seu-usuario/gamedex-mobile'
+const repositoryUrl = 'https://github.com/dudumiranda3105/GameDex'
 
 const appBenefits = [
   'Acesso offline aos seus jogos favoritos',
@@ -17,6 +17,8 @@ const appRequirements = [
 ]
 
 function DownloadPage() {
+  const hasValidApkUrl = apkDownloadUrl.includes('expo.dev') || apkDownloadUrl.includes('.apk')
+
   return (
     <section className="content-page download-page">
       <motion.div
@@ -72,6 +74,11 @@ function DownloadPage() {
         <p className="download-subtext">
           Faça o download da versão APK ou acesse o repositório do app.
         </p>
+        {!hasValidApkUrl && (
+          <p className="download-warning">
+            O link do APK ainda está em modo de exemplo. Atualize a constante apkDownloadUrl com a URL gerada pelo EAS Build.
+          </p>
+        )}
         <div className="actions-row">
           <motion.a
             href={apkDownloadUrl}

@@ -1,11 +1,17 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Heart, LibraryBig, LogIn, LogOut, Save, Trophy, UserRound } from 'lucide-react'
+import { Gamepad2, Heart, LibraryBig, LogIn, LogOut, Mail, Pen, Save, Star, Trophy, UserRound } from 'lucide-react'
 import { ErrorState, LoadingState } from '../components/FeedbackState'
 import { useAuth } from '../hooks/useAuth'
 import { useLibrary } from '../hooks/useLibrary'
 import { useProfile } from '../hooks/useProfile'
 import { gameStatusLabels } from '../lib/gameLibrary'
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 18 },
+  visible: (i) => ({ opacity: 1, y: 0, transition: { delay: 0.12 + i * 0.07, duration: 0.45, ease: [0.22, 1, 0.36, 1] } }),
+}
 
 function ProfileEditor({ initialNickname, initialBio, onSave }) {
   const [nickname, setNickname] = useState(initialNickname)
@@ -118,32 +124,46 @@ function ProfilePage() {
     }, {}),
   ).sort((leftEntry, rightEntry) => rightEntry[1] - leftEntry[1])
 
+  const maxStatusCount = statusSummary.length > 0 ? statusSummary[0][1] : 1
+
+  const statCards = [
+    { icon: <LibraryBig size={20} />, label: 'Jogos salvos', value: items.length, accent: 'var(--color-primary)' },
+    { icon: <Heart size={20} />, label: 'Favoritos', value: favoriteCount, accent: '#ec4899' },
+    { icon: <Gamepad2 size={20} />, label: 'Jogando', value: playingCount, accent: '#22d3ee' },
+    { icon: <Trophy size={20} />, label: 'Completados', value: completedCount, accent: '#4ade80' },
+  ]
+
   return (
     <section className="content-page profile-page">
+      {/* Hero banner */}
       <motion.div
-        className="hero-panel profile-hero"
-        initial={{ opacity: 0, y: -12 }}
+        className="profile-hero-banner"
+        initial={{ opacity: 0, y: -14 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.45 }}
+        transition={{ duration: 0.5 }}
       >
-        <div className="profile-hero-head">
+        <div className="profile-hero-glow" />
+        <div className="profile-hero-content">
           <div className="profile-avatar-wrap">
             {photoURL ? (
               <img src={photoURL} alt={displayName} className="profile-avatar" />
             ) : (
               <div className="profile-avatar profile-avatar-fallback">
-                <UserRound size={28} />
+                <UserRound size={32} />
               </div>
             )}
+            <span className="profile-avatar-ring" />
           </div>
-          <div>
-        <p className="hero-kicker">Perfil do usuario</p>
-        <h1>{displayName || 'Sua conta GameDex'}</h1>
-        <p>{user.email}</p>
+          <div className="profile-hero-info">
+            <h1 className="profile-display-name">{displayName || 'Sua conta GameDex'}</h1>
+            <p className="profile-email-line">
+              <Mail size={14} />
+              {user.email}
+            </p>
+            {profile.bio && <p className="profile-bio-text">{profile.bio}</p>}
           </div>
         </div>
-
-        <div className="profile-actions-row">
+        <div className="profile-hero-actions">
           <button type="button" className="secondary-btn auth-action-btn" onClick={signOut}>
             <LogOut size={16} />
             Sair da conta
@@ -151,35 +171,33 @@ function ProfilePage() {
         </div>
       </motion.div>
 
-      <div className="profile-grid">
-        <div className="section-panel profile-card">
-          <div className="profile-card-header">
-            <UserRound size={18} />
-            <h2 className="section-title">Conta</h2>
-          </div>
-          <div className="profile-info-list">
-            <div className="profile-info-row">
-              <span>Nome exibido</span>
-              <strong>{displayName || 'Nao informado'}</strong>
+      {/* Stats row */}
+      <div className="profile-stats-row">
+        {statCards.map((stat, i) => (
+          <motion.div
+            key={stat.label}
+            className="profile-stat-card"
+            custom={i}
+            variants={cardVariants}
+            initial="hidden"
+            animate="visible"
+            style={{ '--stat-accent': stat.accent }}
+          >
+            <span className="profile-stat-icon">{stat.icon}</span>
+            <div>
+              <span className="profile-stat-label">{stat.label}</span>
+              <strong className="profile-stat-value">{stat.value}</strong>
             </div>
-            <div className="profile-info-row">
-              <span>Email</span>
-              <strong>{user.email}</strong>
-            </div>
-            <div className="profile-info-row">
-              <span>UID</span>
-              <strong className="profile-uid">{user.uid}</strong>
-            </div>
-            <div className="profile-info-row">
-              <span>Bio</span>
-              <strong className="profile-bio-preview">{profile.bio || 'Sem bio definida'}</strong>
-            </div>
-          </div>
-        </div>
+          </motion.div>
+        ))}
+      </div>
 
-        <div className="section-panel profile-card">
+      {/* Content grid */}
+      <div className="profile-grid">
+        {/* Edit profile */}
+        <motion.div className="section-panel profile-card profile-card-wide" custom={0} variants={cardVariants} initial="hidden" animate="visible">
           <div className="profile-card-header">
-            <UserRound size={18} />
+            <Pen size={18} />
             <h2 className="section-title">Editar perfil</h2>
           </div>
           <ProfileEditor
@@ -188,59 +206,59 @@ function ProfilePage() {
             initialBio={profile.bio || ''}
             onSave={saveProfile}
           />
-        </div>
+        </motion.div>
 
-        <div className="section-panel profile-card">
-          <div className="profile-card-header">
-            <LibraryBig size={18} />
-            <h2 className="section-title">Resumo da biblioteca</h2>
-          </div>
-          <div className="profile-stats-grid">
-            <div className="profile-stat-box">
-              <span>Jogos salvos</span>
-              <strong>{items.length}</strong>
-            </div>
-            <div className="profile-stat-box">
-              <span>Favoritos</span>
-              <strong>{favoriteCount}</strong>
-            </div>
-            <div className="profile-stat-box">
-              <span>Jogando</span>
-              <strong>{playingCount}</strong>
-            </div>
-            <div className="profile-stat-box">
-              <span>Completados</span>
-              <strong>{completedCount}</strong>
-            </div>
-          </div>
-        </div>
-
-        <div className="section-panel profile-card profile-card-wide">
+        {/* Status chart */}
+        <motion.div className="section-panel profile-card profile-card-wide" custom={1} variants={cardVariants} initial="hidden" animate="visible">
           <div className="profile-card-header">
             <Trophy size={18} />
-            <h2 className="section-title">Status mais usados</h2>
+            <h2 className="section-title">Progresso por status</h2>
           </div>
           {statusSummary.length === 0 ? (
-            <p className="profile-empty-copy">Voce ainda nao classificou nenhum jogo. Use a biblioteca para marcar progresso.</p>
+            <p className="profile-empty-copy">Você ainda não classificou nenhum jogo. Use a biblioteca para marcar progresso.</p>
           ) : (
-            <div className="profile-status-list">
+            <div className="profile-status-bars">
               {statusSummary.map(([status, count]) => (
-                <div key={status} className="profile-status-row">
-                  <span>{gameStatusLabels[status] || status}</span>
-                  <strong>{count}</strong>
+                <div key={status} className="profile-status-bar-row">
+                  <span className="profile-status-bar-label">{gameStatusLabels[status] || status}</span>
+                  <div className="profile-status-bar-track">
+                    <motion.div
+                      className="profile-status-bar-fill"
+                      initial={{ width: 0 }}
+                      animate={{ width: `${(count / maxStatusCount) * 100}%` }}
+                      transition={{ duration: 0.6, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                    />
+                  </div>
+                  <span className="profile-status-bar-count">{count}</span>
                 </div>
               ))}
             </div>
           )}
-        </div>
+        </motion.div>
 
-        <div className="section-panel profile-card profile-card-wide">
+        {/* Quick link */}
+        <motion.div className="section-panel profile-card profile-card-wide" custom={2} variants={cardVariants} initial="hidden" animate="visible">
           <div className="profile-card-header">
-            <Heart size={18} />
-            <h2 className="section-title">Atalho</h2>
+            <Star size={18} />
+            <h2 className="section-title">Acesso rápido</h2>
           </div>
-          <p className="profile-empty-copy">Acesse a aba Minha biblioteca para ver os jogos salvos, filtrar status e revisar favoritos.</p>
-        </div>
+          <div className="profile-quick-links">
+            <Link to="/library" className="profile-quick-link">
+              <LibraryBig size={18} />
+              <div>
+                <strong>Minha Biblioteca</strong>
+                <span>Veja jogos salvos, filtre status e revise favoritos</span>
+              </div>
+            </Link>
+            <Link to="/search" className="profile-quick-link">
+              <Gamepad2 size={18} />
+              <div>
+                <strong>Buscar jogos</strong>
+                <span>Descubra novos títulos e adicione à sua coleção</span>
+              </div>
+            </Link>
+          </div>
+        </motion.div>
       </div>
     </section>
   )

@@ -4,6 +4,8 @@ import GameCard from '../components/GameCard'
 import { EmptyState, ErrorState, SkeletonGameGrid } from '../components/FeedbackState'
 import { fetchGames, fetchGenres, fetchPlatforms } from '../services/rawgApi'
 
+const quickSearches = ['Elden Ring', 'GTA', 'The Witcher', 'Hollow Knight', 'Minecraft']
+
 const orderingOptions = [
   { value: '-relevance', label: 'Mais relevantes' },
   { value: '-rating', label: 'Melhor nota' },
@@ -77,6 +79,29 @@ function SearchPage() {
     setError(false)
   }
 
+  const handleQuickSearch = async (term) => {
+    setQuery(term)
+
+    try {
+      setLoading(true)
+      setError(false)
+      const data = await fetchGames({
+        search: term,
+        ordering: ordering === '-relevance' ? undefined : ordering,
+        genres: selectedGenre || undefined,
+        parent_platforms: selectedPlatform || undefined,
+        page_size: 24,
+      })
+      setResults(data)
+      setHasSearched(true)
+    } catch (err) {
+      console.error(err)
+      setError(true)
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
     <section className="content-page">
       <motion.div
@@ -147,6 +172,27 @@ function SearchPage() {
         </button>
       </motion.form>
 
+      <motion.div
+        className="search-helper-row"
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.45, delay: 0.14 }}
+      >
+        <p>Buscas rápidas:</p>
+        <div className="search-helper-chips">
+          {quickSearches.map((term) => (
+            <button
+              key={term}
+              type="button"
+              className="search-helper-chip"
+              onClick={() => handleQuickSearch(term)}
+            >
+              {term}
+            </button>
+          ))}
+        </div>
+      </motion.div>
+
       {loading && (
         <div className="section-panel">
           <h2 className="section-title">Buscando jogos...</h2>
@@ -169,6 +215,11 @@ function SearchPage() {
             transition={{ duration: 0.4 }}
           >
             <h2 className="section-title">Resultados ({results.length})</h2>
+            <p className="search-results-meta">
+              {selectedGenre || selectedPlatform
+                ? 'Filtros ativos aplicados.'
+                : 'Sem filtros adicionais.'}
+            </p>
             <div className="games-grid">
               {results.map((game, index) => (
                 <GameCard key={game.id} game={game} index={index} />

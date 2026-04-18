@@ -1,15 +1,16 @@
-import { NavLink, Outlet, useLocation } from 'react-router-dom'
+import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { LogIn, LogOut, UserRound } from 'lucide-react'
+import { LogIn, UserRound, Gamepad2 } from 'lucide-react'
+import { SiGithub } from 'react-icons/si'
 import { useAuth } from '../hooks/useAuth'
 import { useProfile } from '../hooks/useProfile'
 
 const baseNavItems = [
   { to: '/', label: 'Home' },
-  { to: '/library', label: 'Minha biblioteca' },
+  { to: '/library', label: 'Biblioteca' },
   { to: '/search', label: 'Busca' },
-  { to: '/download', label: 'App' },
   { to: '/about', label: 'Sobre' },
+  { to: '/download', label: 'App' },
 ]
 
 const pageVariants = {
@@ -20,11 +21,10 @@ const pageVariants = {
 
 function Layout() {
   const location = useLocation()
-  const { user, authEnabled, signInWithGoogle, signOut } = useAuth()
+  const navigate = useNavigate()
+  const { user, authEnabled } = useAuth()
   const { displayName, photoURL } = useProfile()
-  const navItems = user
-    ? [baseNavItems[0], { to: '/profile', label: 'Perfil' }, ...baseNavItems.slice(1)]
-    : baseNavItems
+  const navItems = baseNavItems
 
   return (
     <div className="app-shell">
@@ -35,33 +35,45 @@ function Layout() {
         transition={{ type: 'spring', stiffness: 85, damping: 16 }}
       >
         <div className="topbar-inner">
-          <div>
-            <div className="brand">GameDex</div>
-            <p className="brand-subtitle">Descubra e explore jogos com dados em tempo real</p>
-          </div>
+          <NavLink to="/" className="topbar-brand-row" aria-label="GameDex Home">
+            <span className="brand-icon"><Gamepad2 size={20} /></span>
+            <span className="brand">GameDex</span>
+          </NavLink>
+
+          <nav className="topbar-nav" aria-label="Menu principal">
+            {navItems.map((item) => (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                className={({ isActive }) => (isActive ? 'topbar-nav-link active' : 'topbar-nav-link')}
+              >
+                {item.label}
+              </NavLink>
+            ))}
+          </nav>
 
           <div className="topbar-account-area">
             {authEnabled && user ? (
-              <>
-                <div className="topbar-account-chip">
+                <motion.button
+                  type="button"
+                  className="topbar-avatar-link"
+                  title="Ir para o perfil"
+                  onClick={() => navigate('/profile')}
+                  whileHover={{ scale: 1.06 }}
+                  whileTap={{ scale: 0.96 }}
+                >
                   {photoURL ? (
-                    <img src={photoURL} alt={displayName} className="topbar-avatar" />
+                    <img src={photoURL} alt={displayName || 'Perfil'} className="topbar-avatar" />
                   ) : (
                     <span className="topbar-avatar-fallback">
                       <UserRound size={16} />
                     </span>
                   )}
-                  <span>{displayName}</span>
-                </div>
-                <button type="button" className="secondary-btn topbar-auth-btn" onClick={signOut}>
-                  <LogOut size={16} />
-                  Sair
-                </button>
-              </>
+                </motion.button>
             ) : authEnabled ? (
-              <button type="button" className="primary-btn topbar-auth-btn" onClick={signInWithGoogle}>
+              <button type="button" className="primary-btn topbar-auth-btn" onClick={() => navigate('/login')}>
                 <LogIn size={16} />
-                Entrar
+                Login
               </button>
             ) : (
               <div className="topbar-account-chip muted">
@@ -73,25 +85,6 @@ function Layout() {
       </motion.header>
 
       <div className="shell-layout">
-        <aside className="sidebar section-panel">
-          <p className="sidebar-title">Menu</p>
-          <nav className="sidebar-nav">
-            {navItems.map((item) => (
-              <NavLink
-                key={item.to}
-                to={item.to}
-                className={({ isActive }) => (isActive ? 'sidebar-link active' : 'sidebar-link')}
-              >
-                {item.label}
-              </NavLink>
-            ))}
-          </nav>
-          <div className="sidebar-card">
-            <p className="sidebar-card-title">Dica rápida</p>
-            <p>Use a aba Perfil para ver os dados da conta e a aba Minha biblioteca para acompanhar progresso e favoritos.</p>
-          </div>
-        </aside>
-
         <main className="page-container">
           <AnimatePresence mode="wait">
             <motion.div
@@ -108,20 +101,18 @@ function Layout() {
         </main>
       </div>
 
-      <motion.footer
-        className="footer"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.5 }}
-      >
+      <footer className="footer">
         <div className="footer-content">
-          <div className="footer-grid">
-            <div>
-              <p className="footer-brand">GameDex Web</p>
+          <div className="footer-top">
+            <div className="footer-brand-area">
+              <div className="footer-brand-row">
+                <span className="brand-icon"><Gamepad2 size={18} /></span>
+                <span className="footer-brand">GameDex</span>
+              </div>
               <p className="footer-description">Seu catálogo gamer com visual moderno e dados atualizados da comunidade.</p>
             </div>
 
-            <div>
+            <div className="footer-nav-col">
               <p className="footer-heading">Navegação</p>
               <div className="footer-links">
                 {navItems.map((item) => (
@@ -130,20 +121,34 @@ function Layout() {
               </div>
             </div>
 
-            <div>
+            <div className="footer-nav-col">
               <p className="footer-heading">Dados</p>
               <p className="footer-api">
-                Informações fornecidas por <a href="https://rawg.io" target="_blank" rel="noreferrer">RAWG API</a>
+                Informações por{' '}
+                <a href="https://rawg.io" target="_blank" rel="noreferrer">RAWG API</a>
               </p>
-              <p className="footer-status">Atualizado em tempo real</p>
+              <span className="footer-status-badge">● Atualizado em tempo real</span>
+            </div>
+
+            <div className="footer-nav-col">
+              <p className="footer-heading">Open Source</p>
+              <a
+                href="https://github.com/dudumiranda3105/GameDex"
+                target="_blank"
+                rel="noreferrer"
+                className="footer-gh-link"
+              >
+                <SiGithub size={16} />
+                Ver no GitHub
+              </a>
             </div>
           </div>
 
           <div className="footer-bottom">
-            <p className="footer-copy">© 2026 GameDex. Todos os direitos reservados.</p>
+            <p className="footer-copy">© {new Date().getFullYear()} GameDex — Todos os direitos reservados.</p>
           </div>
         </div>
-      </motion.footer>
+      </footer>
     </div>
   )
 }

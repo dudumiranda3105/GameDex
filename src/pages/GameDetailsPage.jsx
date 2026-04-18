@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { motion } from 'framer-motion'
-import { Heart, LogIn, Save, Trash2 } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Heart, LogIn, Save, Trash2, BookmarkPlus, X, CheckCircle, ChevronDown } from 'lucide-react'
 import { ErrorState, SkeletonGameDetails } from '../components/FeedbackState'
 import { useAuth } from '../hooks/useAuth'
 import { useLibrary } from '../hooks/useLibrary'
@@ -20,6 +20,8 @@ function GameDetailsPage() {
   const [notes, setNotes] = useState('')
   const [isFavorite, setIsFavorite] = useState(false)
   const [saveFeedback, setSaveFeedback] = useState('')
+  const [showLibraryPopup, setShowLibraryPopup] = useState(false)
+  const [statusDropdownOpen, setStatusDropdownOpen] = useState(false)
 
   const libraryEntry = getEntry(id)
 
@@ -51,6 +53,16 @@ function GameDetailsPage() {
     setIsFavorite(Boolean(libraryEntry?.isFavorite))
   }, [libraryEntry, id])
 
+  const handleOpenLibraryPopup = async () => {
+    if (!authEnabled || !user) {
+      await signInWithGoogle()
+      return
+    }
+    setSaveFeedback('')
+    setStatusDropdownOpen(false)
+    setShowLibraryPopup(true)
+  }
+
   const handleSaveLibraryEntry = async () => {
     if (!user) {
       await signInWithGoogle()
@@ -64,6 +76,7 @@ function GameDetailsPage() {
         isFavorite,
       })
       setSaveFeedback('Biblioteca atualizada com sucesso.')
+      setTimeout(() => setShowLibraryPopup(false), 1200)
     } catch (saveError) {
       console.error(saveError)
       setSaveFeedback('Nao foi possivel salvar suas alteracoes.')
@@ -77,11 +90,21 @@ function GameDetailsPage() {
       setSelectedStatus('want_to_play')
       setNotes('')
       setIsFavorite(false)
+      setTimeout(() => setShowLibraryPopup(false), 1200)
     } catch (removeError) {
       console.error(removeError)
       setSaveFeedback('Nao foi possivel remover este jogo.')
     }
   }
+
+  useEffect(() => {
+    if (showLibraryPopup) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => { document.body.style.overflow = '' }
+  }, [showLibraryPopup])
 
   if (loading) return <SkeletonGameDetails />
   if (error || !game) return <ErrorState message="Não foi possível carregar os detalhes deste jogo." />
@@ -102,6 +125,7 @@ function GameDetailsPage() {
 
   const genres = game.genres?.map((genre) => genre.name) || []
   const platforms = game.platforms?.map((platform) => platform.platform.name) || []
+  const genresLabel = genres.length > 0 ? genres.slice(0, 3).join(' • ') : 'Sem genero definido'
 
   return (
     <article className="details-page">
@@ -145,6 +169,15 @@ function GameDetailsPage() {
         {game.released ? `Lançamento: ${game.released}` : 'Data de lançamento não informada'}
       </motion.p>
 
+      <motion.p
+        className="details-subheadline"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.45, delay: 0.2 }}
+      >
+        {genresLabel}
+      </motion.p>
+
       <motion.div
         className="details-stats-grid"
         initial={{ opacity: 0, y: 12 }}
@@ -165,8 +198,16 @@ function GameDetailsPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.45, delay: 0.28 }}
       >
+        <button
+          type="button"
+          className={libraryEntry ? 'library-popup-btn library-popup-btn--saved' : 'library-popup-btn'}
+          onClick={handleOpenLibraryPopup}
+        >
+          {libraryEntry ? <CheckCircle size={18} /> : <BookmarkPlus size={18} />}
+          {libraryEntry ? 'Na minha biblioteca' : 'Adicionar à biblioteca'}
+        </button>
         {game.website && (
-          <a href={game.website} target="_blank" rel="noreferrer" className="primary-btn">
+          <a href={game.website} target="_blank" rel="noreferrer" className="secondary-btn">
             Site oficial
           </a>
         )}
@@ -177,84 +218,122 @@ function GameDetailsPage() {
         )}
       </motion.div>
 
-      <motion.section
-        className="section-panel library-control-panel"
-        initial={{ opacity: 0, y: 18 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.45, delay: 0.32 }}
-      >
-        <div className="library-control-header">
-          <div>
-            <p className="sidebar-title">Minha biblioteca</p>
-            <h2 className="section-title">Acompanhe seu progresso neste jogo</h2>
-          </div>
-          {libraryEntry && <span className="library-synced-badge">Sincronizado</span>}
-        </div>
-
-        {!authEnabled ? (
-          <ErrorState message="Configure o Firebase web para liberar login e salvar progresso." />
-        ) : !user ? (
-          <div className="library-login-cta">
-            <p>Entre com Google para salvar este jogo, marcar status e criar sua colecao pessoal.</p>
-            <button type="button" className="primary-btn auth-action-btn" onClick={signInWithGoogle}>
-              <LogIn size={16} />
-              Entrar para salvar
-            </button>
-          </div>
-        ) : (
-          <div className="library-control-grid">
-            <label className="library-field">
-              <span>Status</span>
-              <select value={selectedStatus} onChange={(event) => setSelectedStatus(event.target.value)}>
-                {gameStatusOptions.map((option) => (
-                  <option key={option.value} value={option.value}>{option.label}</option>
-                ))}
-              </select>
-            </label>
-
-            <label className="library-favorite-toggle">
-              <input
-                type="checkbox"
-                checked={isFavorite}
-                onChange={(event) => setIsFavorite(event.target.checked)}
-              />
-              <span>
-                <Heart size={16} fill={isFavorite ? 'currentColor' : 'none'} />
-                Marcar como favorito
-              </span>
-            </label>
-
-            <label className="library-field full-width">
-              <span>Observacoes</span>
-              <textarea
-                value={notes}
-                onChange={(event) => setNotes(event.target.value)}
-                placeholder="Ex: campanha quase no fim, quero testar DLC, coop com amigos..."
-                rows="4"
-              />
-            </label>
-
-            <div className="library-control-actions full-width">
-              <button type="button" className="primary-btn auth-action-btn" onClick={handleSaveLibraryEntry}>
-                <Save size={16} />
-                {libraryEntry ? 'Atualizar biblioteca' : 'Salvar na biblioteca'}
-              </button>
-              {libraryEntry && (
-                <button type="button" className="secondary-btn auth-action-btn" onClick={handleRemoveLibraryEntry}>
-                  <Trash2 size={16} />
-                  Remover
+      <AnimatePresence>
+        {showLibraryPopup && (
+          <motion.div
+            className="library-popup-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.22 }}
+            onClick={() => setShowLibraryPopup(false)}
+          >
+            <motion.div
+              className="library-popup"
+              initial={{ opacity: 0, scale: 0.92, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.92, y: 20 }}
+              transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="library-popup-header">
+                <div>
+                  <h3 className="library-popup-title">Minha Biblioteca</h3>
+                  <p className="library-popup-subtitle">{game.name}</p>
+                </div>
+                <button
+                  type="button"
+                  className="library-popup-close"
+                  onClick={() => setShowLibraryPopup(false)}
+                  aria-label="Fechar"
+                >
+                  <X size={18} />
                 </button>
-              )}
-            </div>
+              </div>
 
-            {(saveFeedback || libraryError) && (
-              <p className={saveFeedback?.includes('sucesso') || saveFeedback?.includes('Sincronizado') ? 'state-message success' : 'state-message error'}>
-                {saveFeedback || libraryError}
-              </p>
-            )}
-          </div>
+              <div className="library-popup-body">
+                <div className="library-popup-field">
+                  <span>Status</span>
+                  <div className="custom-select-wrapper">
+                    <button
+                      type="button"
+                      className={statusDropdownOpen ? 'custom-select-trigger open' : 'custom-select-trigger'}
+                      onClick={() => setStatusDropdownOpen((v) => !v)}
+                    >
+                      {gameStatusOptions.find((o) => o.value === selectedStatus)?.label}
+                      <ChevronDown size={16} className="custom-select-chevron" />
+                    </button>
+                    <AnimatePresence>
+                      {statusDropdownOpen && (
+                        <motion.ul
+                          className="custom-select-list"
+                          initial={{ opacity: 0, y: -6 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -6 }}
+                          transition={{ duration: 0.18 }}
+                        >
+                          {gameStatusOptions.map((opt) => (
+                            <li key={opt.value}>
+                              <button
+                                type="button"
+                                className={opt.value === selectedStatus ? 'custom-select-option active' : 'custom-select-option'}
+                                onClick={() => { setSelectedStatus(opt.value); setStatusDropdownOpen(false) }}
+                              >
+                                {opt.label}
+                              </button>
+                            </li>
+                          ))}
+                        </motion.ul>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                </div>
+
+                <label className="library-popup-favorite">
+                  <input
+                    type="checkbox"
+                    checked={isFavorite}
+                    onChange={(e) => setIsFavorite(e.target.checked)}
+                  />
+                  <span>
+                    <Heart size={16} fill={isFavorite ? 'currentColor' : 'none'} />
+                    Marcar como favorito
+                  </span>
+                </label>
+
+                <label className="library-popup-field">
+                  <span>Observações</span>
+                  <textarea
+                    value={notes}
+                    onChange={(e) => setNotes(e.target.value)}
+                    placeholder="Ex: campanha quase no fim, quero testar DLC, coop com amigos..."
+                    rows="3"
+                  />
+                </label>
+              </div>
+
+              <div className="library-popup-actions">
+                <button type="button" className="primary-btn" onClick={handleSaveLibraryEntry}>
+                  <Save size={16} />
+                  {libraryEntry ? 'Atualizar' : 'Salvar'}
+                </button>
+                {libraryEntry && (
+                  <button type="button" className="secondary-btn" onClick={handleRemoveLibraryEntry}>
+                    <Trash2 size={16} />
+                    Remover
+                  </button>
+                )}
+              </div>
+
+              {(saveFeedback || libraryError) && (
+                <p className={saveFeedback?.includes('sucesso') || saveFeedback?.includes('Sincronizado') ? 'library-popup-feedback success' : 'library-popup-feedback error'}>
+                  {saveFeedback || libraryError}
+                </p>
+              )}
+            </motion.div>
+          </motion.div>
         )}
-      </motion.section>
+      </AnimatePresence>
 
       <div className="details-content-grid">
         <motion.div

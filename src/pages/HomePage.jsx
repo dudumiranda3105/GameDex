@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
+import { Link } from 'react-router-dom'
 import GameCard from '../components/GameCard'
 import { ErrorState, SkeletonGameGrid } from '../components/FeedbackState'
 import { fetchGames } from '../services/rawgApi'
@@ -64,6 +65,8 @@ function HomePage() {
   }
   if (error) return <ErrorState />
 
+  const totalGamesLoaded = Object.values(sections).reduce((accumulator, games) => accumulator + (games?.length || 0), 0)
+
   return (
     <div>
       <motion.section
@@ -94,6 +97,36 @@ function HomePage() {
         >
           Explore os títulos mais populares, descubra lançamentos e encontre seu próximo jogo favorito com informações detalhadas da RAWG API.
         </motion.p>
+
+        <motion.div
+          className="hero-actions"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.42, duration: 0.5 }}
+        >
+          <Link to="/search" className="primary-btn">Buscar agora</Link>
+          <Link to="/library" className="secondary-btn">Minha biblioteca</Link>
+        </motion.div>
+
+        <motion.div
+          className="home-stats"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5, duration: 0.5 }}
+        >
+          <div className="home-stat-card">
+            <span>Seções em destaque</span>
+            <strong>{sectionConfigs.length}</strong>
+          </div>
+          <div className="home-stat-card">
+            <span>Jogos carregados</span>
+            <strong>{totalGamesLoaded}</strong>
+          </div>
+          <div className="home-stat-card">
+            <span>Atualização</span>
+            <strong>Tempo real</strong>
+          </div>
+        </motion.div>
       </motion.section>
 
       {sectionConfigs.map((section, sectionIndex) => (

@@ -111,6 +111,10 @@ function LibraryPage() {
             Somente favoritos
           </button>
         </div>
+
+        <p className="library-toolbar-meta">
+          {filteredItems.length} jogo(s) exibido(s) com os filtros atuais.
+        </p>
       </div>
 
       {filteredItems.length === 0 ? (
@@ -120,7 +124,7 @@ function LibraryPage() {
             : 'Nenhum jogo encontrado com os filtros atuais.'}
         />
       ) : (
-        <div className="games-grid">
+        <div className="games-grid library-grid">
           {filteredItems.map((item, index) => (
             <div key={item.gameId} className="library-card-slot">
               <div className="library-card-meta">
