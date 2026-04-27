@@ -8,7 +8,7 @@ Plataforma para descobrir e gerenciar jogos, consumindo dados da **RAWG API** co
 
 | Plataforma | Link |
 |---|---|
-| Web | **https://game-dex-theta.vercel.app** |
+| Web | **https://game-dex-dudumiranda3105s-projects.vercel.app** |
 | APK Android | **[Download APK](https://expo.dev/artifacts/eas/eu23AZcRw258trhDoVVZrh.apk)** |
 
 ---
@@ -73,7 +73,7 @@ Plataforma para descobrir e gerenciar jogos, consumindo dados da **RAWG API** co
   - `GET /genres` — lista de gêneros
   - `GET /platforms/lists/parents` — lista de plataformas
 
-- **Backend próprio** (`https://game-dex-theta.vercel.app/api`)
+- **Backend próprio** (`https://game-dex-dudumiranda3105s-projects.vercel.app/api`)
   - `GET /api/health` — status da API
   - `GET /api/library` — biblioteca do usuário autenticado
   - `POST /api/library` — salvar/atualizar jogo na biblioteca
@@ -149,7 +149,7 @@ Crie `mobile/.env`:
 
 ```env
 EXPO_PUBLIC_RAWG_API_KEY=sua_chave_rawg
-EXPO_PUBLIC_API_BASE_URL=https://game-dex-theta.vercel.app/api
+EXPO_PUBLIC_API_BASE_URL=https://game-dex-dudumiranda3105s-projects.vercel.app/api
 
 EXPO_PUBLIC_FIREBASE_API_KEY=sua_firebase_api_key
 EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN=seu-projeto.firebaseapp.com

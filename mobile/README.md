@@ -35,7 +35,7 @@ Aplicativo mobile para descobrir e gerenciar jogos usando a **RAWG API**, com au
   - `GET /games` — listagem e busca de jogos
   - `GET /games/{id}` — detalhes de um jogo específico
 
-- **Backend próprio** (`https://game-dex-theta.vercel.app/api`)
+- **Backend próprio** (`https://game-dex-dudumiranda3105s-projects.vercel.app/api`)
   - `GET /api/library` — biblioteca do usuário autenticado
   - `POST /api/library` — salvar/atualizar jogo na biblioteca
   - `DELETE /api/library?gameId=ID` — remover jogo
@@ -65,7 +65,7 @@ Crie um arquivo `.env` dentro da pasta `mobile/`:
 
 ```env
 EXPO_PUBLIC_RAWG_API_KEY=sua_chave_rawg
-EXPO_PUBLIC_API_BASE_URL=https://game-dex-theta.vercel.app/api
+EXPO_PUBLIC_API_BASE_URL=https://game-dex-dudumiranda3105s-projects.vercel.app/api
 
 # Firebase
 EXPO_PUBLIC_FIREBASE_API_KEY=sua_firebase_api_key
