@@ -36,6 +36,27 @@
   gap: 0.65rem;
 }
 
+.topbar-menu-toggle {
+  display: none;
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.04);
+  color: #f0f2f8;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.topbar-mobile-account {
+  display: none;
+}
+
+.topbar-backdrop {
+  display: none;
+}
+
 .topbar-nav {
   display: flex;
   flex-wrap: wrap;
@@ -2043,6 +2064,7 @@
 @media (max-width: 720px) {
   .topbar {
     padding: 0.8rem 0.9rem;
+    z-index: 40;
   }
 
   .topbar-inner {
@@ -2062,31 +2084,65 @@
     font-size: 1.12rem;
   }
 
+  .topbar-menu-toggle {
+    display: inline-flex;
+  }
+
   .topbar-nav {
-    grid-column: 1 / -1;
-    width: 100%;
-    overflow-x: auto;
-    scrollbar-width: thin;
-    padding-bottom: 0.15rem;
-    flex-wrap: nowrap;
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: min(84vw, 340px);
+    height: 100dvh;
+    padding: 4.2rem 1rem 1rem;
+    background: rgba(5, 5, 7, 0.98);
+    border-left: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
     justify-content: flex-start;
+    gap: 0.6rem;
+    transform: translateX(100%);
+    transition: transform 0.24s ease;
+    z-index: 30;
+    overflow-y: auto;
+  }
+
+  .topbar-nav.is-open {
+    transform: translateX(0);
+  }
+
+  .topbar-mobile-account {
+    display: flex;
+    margin-bottom: 0.35rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   }
 
   .topbar-nav-link {
-    flex: 0 0 auto;
-    white-space: nowrap;
-    padding: 0.5rem 0.68rem;
-    font-size: 0.83rem;
+    width: 100%;
+    text-align: left;
+    padding: 0.72rem 0.82rem;
+    font-size: 0.9rem;
   }
 
   .topbar-account-area {
-    justify-content: flex-end;
-    gap: 0.45rem;
+    display: none;
   }
 
   .topbar-auth-btn {
-    padding: 0.62rem 0.78rem;
-    font-size: 0.84rem;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .topbar-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 20;
+    border: 0;
+    background: rgba(0, 0, 0, 0.5);
+    cursor: pointer;
   }
 
   .shell-layout {
@@ -2808,11 +2864,11 @@
   }
 
   .topbar-inner {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr) auto;
   }
 
   .topbar-account-area {
-    justify-content: flex-start;
+    display: none;
   }
 
   .topbar-avatar,

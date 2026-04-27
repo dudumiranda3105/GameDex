@@ -1,6 +1,7 @@
+import { useEffect, useState } from 'react'
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { LogIn, UserRound, Gamepad2 } from 'lucide-react'
+import { LogIn, UserRound, Gamepad2, Menu, X } from 'lucide-react'
 import { SiGithub } from 'react-icons/si'
 import { useAuth } from '../hooks/useAuth'
 import { useProfile } from '../hooks/useProfile'
@@ -24,6 +25,46 @@ function Layout() {
   const { user, authEnabled } = useAuth()
   const { displayName, photoURL } = useProfile()
   const navItems = baseNavItems
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+
+  useEffect(() => {
+    setIsMenuOpen(false)
+  }, [location.pathname])
+
+  useEffect(() => {
+    document.body.style.overflow = isMenuOpen ? 'hidden' : ''
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [isMenuOpen])
+
+  const accountContent = authEnabled && user ? (
+    <motion.button
+      type="button"
+      className="topbar-avatar-link"
+      title="Ir para o perfil"
+      onClick={() => navigate('/profile')}
+      whileHover={{ scale: 1.06 }}
+      whileTap={{ scale: 0.96 }}
+    >
+      {photoURL ? (
+        <img src={photoURL} alt={displayName || 'Perfil'} className="topbar-avatar" />
+      ) : (
+        <span className="topbar-avatar-fallback">
+          <UserRound size={16} />
+        </span>
+      )}
+    </motion.button>
+  ) : authEnabled ? (
+    <button type="button" className="primary-btn topbar-auth-btn" onClick={() => navigate('/login')}>
+      <LogIn size={16} />
+      Login
+    </button>
+  ) : (
+    <div className="topbar-account-chip muted">
+      <span>Login desativado</span>
+    </div>
+  )
 
   return (
     <div className="app-shell">
@@ -39,7 +80,25 @@ function Layout() {
             <span className="brand">GameDex</span>
           </NavLink>
 
-          <nav className="topbar-nav" aria-label="Menu principal">
+          <button
+            type="button"
+            className="topbar-menu-toggle"
+            aria-label={isMenuOpen ? 'Fechar menu' : 'Abrir menu'}
+            aria-expanded={isMenuOpen}
+            aria-controls="topbar-main-nav"
+            onClick={() => setIsMenuOpen((value) => !value)}
+          >
+            {isMenuOpen ? <X size={18} /> : <Menu size={18} />}
+          </button>
+
+          <nav
+            id="topbar-main-nav"
+            className={isMenuOpen ? 'topbar-nav is-open' : 'topbar-nav'}
+            aria-label="Menu principal"
+          >
+            <div className="topbar-mobile-account">
+              {accountContent}
+            </div>
             {navItems.map((item) => (
               <NavLink
                 key={item.to}
@@ -52,36 +111,19 @@ function Layout() {
           </nav>
 
           <div className="topbar-account-area">
-            {authEnabled && user ? (
-                <motion.button
-                  type="button"
-                  className="topbar-avatar-link"
-                  title="Ir para o perfil"
-                  onClick={() => navigate('/profile')}
-                  whileHover={{ scale: 1.06 }}
-                  whileTap={{ scale: 0.96 }}
-                >
-                  {photoURL ? (
-                    <img src={photoURL} alt={displayName || 'Perfil'} className="topbar-avatar" />
-                  ) : (
-                    <span className="topbar-avatar-fallback">
-                      <UserRound size={16} />
-                    </span>
-                  )}
-                </motion.button>
-            ) : authEnabled ? (
-              <button type="button" className="primary-btn topbar-auth-btn" onClick={() => navigate('/login')}>
-                <LogIn size={16} />
-                Login
-              </button>
-            ) : (
-              <div className="topbar-account-chip muted">
-                <span>Login desativado</span>
-              </div>
-            )}
+            {accountContent}
           </div>
         </div>
       </motion.header>
+
+      {isMenuOpen && (
+        <button
+          type="button"
+          aria-label="Fechar menu"
+          className="topbar-backdrop"
+          onClick={() => setIsMenuOpen(false)}
+        />
+      )}
 
       <div className="shell-layout">
         <main className="page-container">
