@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom'
 import { Code2, Database, Globe, Layers, Rocket, Search, Sparkles, Zap } from 'lucide-react'
 import { SiGithub } from 'react-icons/si'
 
-const apkDownloadUrl = 'https://expo.dev/artifacts/eas/q7jHjb3QR8f1bCQF1BXmLk.apk' // Substitua pela URL real do APK gerado pelo EAS Build
+const fallbackApkUrl = 'https://expo.dev/artifacts/eas/q7jHjb3QR8f1bCQF1BXmLk.apk'
+const apkDownloadUrl = (import.meta.env.VITE_MOBILE_APK_URL || fallbackApkUrl).trim()
 const repositoryUrl = 'https://github.com/dudumiranda3105/GameDex'
 
 const appBenefits = [
