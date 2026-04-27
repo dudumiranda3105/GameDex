@@ -380,7 +380,7 @@ GameDex/
 │       └── download.png            # Download do App (web)
 │
 └── 📄 README.md                    # Este arquivo
-
+```
 ## 🏗️ Arquitetura da Aplicação
 
 ```mermaid
