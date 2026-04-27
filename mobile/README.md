@@ -323,34 +323,57 @@ mobile/
 
 ## 🏗️ Arquitetura da Aplicação
 
+```mermaid
+graph TD
+    subgraph "📱 Cliente"
+        User["👤 Usuário Android"]
+        Screens["🏠 Home | 🔍 Search<br/>🎮 Details | 📚 Library | 👤 Profile"]
+    end
+
+    subgraph "🔐 Autenticação"
+        AuthContext["AuthContext<br/>Firebase Auth"]
+    end
+
+    subgraph "🔌 Serviços"
+        RawgService["rawgApi.js"]
+        BackendService["backendApi.js"]
+    end
+
+    subgraph "🌐 APIs Externas"
+        RawgAPI["RAWG Database<br/>Games Data"]
+        BackendAPI["Vercel Serverless<br/>/api/*"]
+    end
+
+    subgraph "☁️ Firebase Cloud"
+        Firebase["🔥 Firebase<br/>Auth + Firestore"]
+    end
+
+    User --> Screens
+    
+    Screens --> RawgService
+    Screens --> BackendService
+    Screens --> AuthContext
+    
+    AuthContext --> Firebase
+    
+    RawgService --> RawgAPI
+    BackendService --> BackendAPI
+    BackendAPI --> Firebase
+
+    style User fill:#4f46e5,stroke:#3730a3,stroke-width:2px,color:#fff
+    style Screens fill:#7c3aed,stroke:#6d28d9,stroke-width:2px,color:#fff
+    style Firebase fill:#ff6b22,stroke:#ea580c,stroke-width:2px,color:#fff
+    style RawgAPI fill:#00adb5,stroke:#008c95,stroke-width:2px,color:#fff
+    style BackendAPI fill:#10b981,stroke:#059669,stroke-width:2px,color:#fff
+    style AuthContext fill:#f59e0b,stroke:#d97706,stroke-width:2px,color:#fff
 ```
-┌─────────────────────────────────────────────────────────┐
-│                  Usuário (Celular Android)               │
-└────────────────────────────┬────────────────────────────┘
-                             │
-┌────────────────────────────▼────────────────────────────┐
-│              React Native + Expo (App.js)                │
-│                                                          │
-│  Bottom Tabs: Home | Busca | Biblioteca | Perfil         │
-│                                                          │
-│  Stack: GameDetails (sobre qualquer tab)                 │
-│                                                          │
-│  AuthContext ──► Firebase Auth (login/logout/registro)   │
-│                                                          │
-│  rawgApi.js ─────────────────────────► RAWG API          │
-│  backendApi.js ──────┐                (dados de jogos)   │
-└──────────────────────┼──────────────────────────────────┘
-                       │ Bearer Token (Firebase ID Token)
-┌──────────────────────▼──────────────────────────────────┐
-│         Vercel Serverless Functions (/api/*)             │
-│              Firebase Admin SDK                          │
-└──────────────────────┬──────────────────────────────────┘
-                       │
-┌──────────────────────▼──────────────────────────────────┐
-│             Firebase (Google Cloud)                      │
-│   Firestore (biblioteca / perfil)  +  Firebase Auth      │
-└─────────────────────────────────────────────────────────┘
-```
+
+### State Management
+
+- **Firebase Auth** — estado global de autenticação
+- **AuthContext** — contexto React para passar auth entre telas
+- **AsyncStorage** — persistência local de dados (opcional)
+- **Component State** — estado local de telas (loading, error, data)
 
 ---
 

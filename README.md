@@ -384,44 +384,56 @@ GameDex/
 ## 🏗️ Arquitetura da Aplicação
 
 ```mermaid
-flowchart TD
-    UserWeb["👤 Usuário (Web)"]
-    UserMobile["📱 Usuário (Mobile)"]
-
-    subgraph Web ["Web — React + Vite"]
-        Pages["Pages\nHome / Search / GameDetails / Library / About"]
-        Components["Components\nLayout / GameCard / FeedbackState"]
-        WebApi["services/rawgApi.js\nservices/backendApi.js"]
+graph TD
+    subgraph "🌍 Usuários"
+        UserWeb["🖥️ Usuário Web<br/>Browser Desktop/Mobile"]
+        UserMobile["📱 Usuário Mobile<br/>Smartphone Android"]
     end
 
-    subgraph Mobile ["Mobile — React Native + Expo"]
-        Screens["Screens\nHome / Search / GameDetails / Library / Profile"]
-        AuthCtx["AuthContext\nFirebase Auth"]
-        MobileApi["services/rawgApi.js\nservices/backendApi.js"]
+    subgraph Web ["🌐 Web — React + Vite"]
+        Pages["📄 Pages<br/>Home / Search / GameDetails<br/>Library / About / Download"]
+        Components["🧩 Components<br/>Layout / GameCard<br/>FeedbackState"]
+        WebApi["🔌 Services<br/>rawgApi.js<br/>backendApi.js"]
     end
 
-    RAWG["🌐 RAWG API\nrawg.io/apidocs"]
-
-    subgraph Backend ["Backend — Vercel Serverless (api/)"]
-        Functions["health / library / profile\nFirebase Admin SDK"]
+    subgraph Mobile ["📱 Mobile — React Native + Expo"]
+        Screens["📱 Screens<br/>Home / Search / GameDetails<br/>Library / Profile"]
+        AuthCtx["🔐 AuthContext<br/>Firebase Auth"]
+        MobileApi["🔌 Services<br/>rawgApi.js<br/>backendApi.js"]
     end
 
-    subgraph Firebase ["🔥 Firebase — Google Cloud"]
-        Auth["Firebase Auth\nemail/senha + Google"]
-        Firestore["Firestore\nbiblioteca / perfil"]
+    RAWG["🎮 RAWG API<br/>500k+ Games Database"]
+
+    subgraph Backend ["⚙️ Backend — Vercel Serverless"]
+        Functions["🛠️ Functions<br/>/api/health<br/>/api/library<br/>/api/profile<br/>Firebase Admin SDK"]
     end
 
-    UserWeb --> Web
-    UserMobile --> Mobile
+    subgraph Firebase ["☁️ Firebase — Google Cloud"]
+        Auth["🔐 Firebase Auth<br/>Email/Senha + Google"]
+        Firestore["📚 Firestore<br/>Biblioteca / Perfil"]
+    end
 
+    UserWeb --> Pages & Components & WebApi
+    UserMobile --> Screens & AuthCtx & MobileApi
+    
     WebApi -->|GET /games| RAWG
     MobileApi -->|GET /games| RAWG
-
-    WebApi -->|Bearer Token| Backend
-    MobileApi -->|Bearer Token| Backend
-
-    Backend --> Firebase
-    Auth --> AuthCtx
+    
+    WebApi -->|Bearer Token| Functions
+    MobileApi -->|Bearer Token| Functions
+    
+    AuthCtx --> Auth
+    Functions --> Firestore
+    
+    style UserWeb fill:#3b82f6,stroke:#1e40af,stroke-width:2px,color:#fff
+    style UserMobile fill:#8b5cf6,stroke:#6d28d9,stroke-width:2px,color:#fff
+    style Web fill:#10b981,stroke:#065f46,stroke-width:2px,color:#fff
+    style Mobile fill:#06b6d4,stroke:#164e63,stroke-width:2px,color:#fff
+    style RAWG fill:#f59e0b,stroke:#92400e,stroke-width:2px,color:#fff
+    style Backend fill:#ef4444,stroke:#7f1d1d,stroke-width:2px,color:#fff
+    style Firebase fill:#ec4899,stroke:#831843,stroke-width:2px,color:#fff
+    style Auth fill:#ec4899,stroke:#831843,stroke-width:1px,color:#fff
+    style Firestore fill:#ec4899,stroke:#831843,stroke-width:1px,color:#fff
 ```
 
 ---
