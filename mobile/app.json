@@ -2,10 +2,11 @@
   "expo": {
     "name": "GameDex Mobile",
     "slug": "gamedex-mobile",
+    "scheme": "gamedexmobile",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "dark",
     "newArchEnabled": true,
     "splash": {
       "image": "./assets/splash-icon.png",
@@ -30,6 +31,9 @@
       "eas": {
         "projectId": "900c65af-edea-49c7-89b7-51adbf16164b"
       }
-    }
+    },
+    "plugins": [
+      "expo-web-browser"
+    ]
   }
 }

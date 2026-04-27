@@ -2,8 +2,9 @@ import { useState } from 'react'
 import { Alert, FlatList, Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
 import { searchGames } from '../services/rawgApi'
 import GameItem from '../components/GameItem'
+import { colors } from '../theme'
 
-export default function SearchScreen() {
+export default function SearchScreen({ navigation }) {
   const [query, setQuery] = useState('')
   const [results, setResults] = useState([])
   const [loading, setLoading] = useState(false)
@@ -25,15 +26,23 @@ export default function SearchScreen() {
 
   return (
     <View style={styles.container}>
+      <Text style={styles.title}>Buscar jogos</Text>
+      <Text style={styles.subtitle}>Encontre qualquer jogo e abra a ficha completa.</Text>
+
       <View style={styles.searchRow}>
         <TextInput
           style={styles.input}
           value={query}
           onChangeText={setQuery}
           placeholder="Buscar jogo..."
-          placeholderTextColor="#7b879f"
+          placeholderTextColor={colors.textFaint}
+          onSubmitEditing={runSearch}
+          returnKeyType="search"
         />
-        <Pressable style={styles.searchBtn} onPress={runSearch}>
+        <Pressable
+          style={({ pressed }) => [styles.searchBtn, pressed && { opacity: 0.75 }]}
+          onPress={runSearch}
+        >
           <Text style={styles.searchBtnText}>Buscar</Text>
         </Pressable>
       </View>
@@ -43,7 +52,12 @@ export default function SearchScreen() {
         keyExtractor={(item) => String(item.id)}
         refreshing={loading}
         onRefresh={runSearch}
-        renderItem={({ item }) => <GameItem game={item} />}
+        renderItem={({ item }) => (
+          <GameItem
+            game={item}
+            onPress={() => navigation.navigate('GameDetails', { gameId: item.id, initialGame: item })}
+          />
+        )}
         ListEmptyComponent={<Text style={styles.empty}>Digite algo para pesquisar.</Text>}
       />
     </View>
@@ -51,23 +65,35 @@ export default function SearchScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 14, backgroundColor: '#070a12' },
+  container: { flex: 1, padding: 14, backgroundColor: colors.bg },
+  title: {
+    color: colors.textMain,
+    fontSize: 24,
+    fontWeight: '800',
+  },
+  subtitle: {
+    color: colors.textMuted,
+    marginTop: 4,
+    marginBottom: 14,
+  },
   searchRow: { flexDirection: 'row', gap: 8, marginBottom: 12 },
   input: {
     flex: 1,
     borderWidth: 1,
-    borderColor: '#202a40',
-    borderRadius: 10,
-    paddingHorizontal: 12,
-    color: '#f3f6fd',
-    backgroundColor: '#0f1420',
+    borderColor: colors.border,
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 11,
+    color: colors.textMain,
+    backgroundColor: colors.surface,
+    fontSize: 15,
   },
   searchBtn: {
-    backgroundColor: '#4f73ff',
-    borderRadius: 10,
+    backgroundColor: colors.primary,
+    borderRadius: 12,
     justifyContent: 'center',
-    paddingHorizontal: 14,
+    paddingHorizontal: 18,
   },
-  searchBtnText: { color: '#fff', fontWeight: '700' },
-  empty: { color: '#8e9ab4', marginTop: 20 },
+  searchBtnText: { color: '#fff', fontWeight: '700', fontSize: 15 },
+  empty: { color: colors.textFaint, marginTop: 24, textAlign: 'center' },
 })

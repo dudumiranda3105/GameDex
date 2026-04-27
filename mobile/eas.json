@@ -1,14 +1,17 @@
 {
   "cli": {
-    "version": ">= 16.8.0"
+    "version": ">= 16.8.0",
+    "appVersionSource": "remote"
   },
   "build": {
     "preview": {
+      "environment": "preview",
       "android": {
         "buildType": "apk"
       }
     },
     "production": {
+      "environment": "production",
       "android": {
         "buildType": "app-bundle"
       }

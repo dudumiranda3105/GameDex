@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext'
 import { deleteLibraryEntry, fetchLibrary, upsertLibrary } from '../services/backendApi'
 import GameItem, { InlineButton } from '../components/GameItem'
 import { nextStatus, statusLabels } from '../lib/gameLibrary'
+import { colors } from '../theme'
 
 function libraryToGame(item) {
   return {
@@ -15,7 +16,7 @@ function libraryToGame(item) {
   }
 }
 
-export default function LibraryScreen() {
+export default function LibraryScreen({ navigation }) {
   const { user } = useAuth()
   const [items, setItems] = useState([])
   const [loading, setLoading] = useState(false)
@@ -42,6 +43,28 @@ export default function LibraryScreen() {
   useEffect(() => {
     loadLibrary()
   }, [loadLibrary])
+
+  const toggleFavorite = async (item) => {
+    try {
+      const idToken = await user.getIdToken()
+      await upsertLibrary(idToken, {
+        gameId: item.gameId,
+        title: item.title,
+        coverUrl: item.coverUrl,
+        rating: item.rating,
+        released: item.released,
+        platforms: item.platforms || [],
+        genres: item.genres || [],
+        isFavorite: !item.isFavorite,
+        status: item.status,
+        notes: item.notes || '',
+      })
+      await loadLibrary()
+    } catch (error) {
+      console.error(error)
+      Alert.alert('Erro', 'Nao foi possivel atualizar favorito.')
+    }
+  }
 
   const changeStatus = async (item) => {
     try {
@@ -96,9 +119,15 @@ export default function LibraryScreen() {
       renderItem={({ item }) => (
         <GameItem
           game={libraryToGame(item)}
+          onPress={() => navigation.navigate('GameDetails', { gameId: item.gameId, initialGame: libraryToGame(item) })}
           rightContent={(
             <View style={{ gap: 8 }}>
               <Text style={styles.status}>Status: {statusLabels[item.status] || 'Quero jogar'}</Text>
+              <InlineButton
+                label={item.isFavorite ? '★ Favorito' : '☆ Favoritar'}
+                onPress={() => toggleFavorite(item)}
+                secondary
+              />
               <InlineButton label="Trocar status" onPress={() => changeStatus(item)} secondary />
               <InlineButton label="Remover" onPress={() => removeItem(item)} secondary />
             </View>
@@ -110,15 +139,15 @@ export default function LibraryScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { padding: 14, backgroundColor: '#070a12' },
-  title: { color: '#f3f6fd', fontSize: 24, fontWeight: '800', marginBottom: 12 },
-  message: { color: '#98a6c1' },
-  status: { color: '#d8e0f2', marginTop: 8 },
+  container: { padding: 14, backgroundColor: colors.bg },
+  title: { color: colors.textMain, fontSize: 24, fontWeight: '800', marginBottom: 14 },
+  message: { color: colors.textMuted, textAlign: 'center', marginTop: 10 },
+  status: { color: colors.textBody, marginTop: 8, fontSize: 13 },
   center: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
-    backgroundColor: '#070a12',
+    backgroundColor: colors.bg,
   },
 })

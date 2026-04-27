@@ -26,3 +26,11 @@ export async function fetchTrendingGames() {
 export async function searchGames(query) {
   return fetchGames({ search: query, page_size: 30 })
 }
+
+export async function fetchGameDetails(gameId) {
+  const response = await api.get(`/games/${gameId}`, {
+    params: { key: API_KEY },
+  })
+
+  return response.data || null
+}

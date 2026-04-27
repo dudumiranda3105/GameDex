@@ -1,92 +1,107 @@
-# 🎮 GameDex Web
+# 🎮 GameDex
 
-Aplicação web para descobrir jogos usando a **RAWG API**, com foco em experiência moderna, animações suaves e visual premium.
+Plataforma para descobrir e gerenciar jogos, consumindo dados da **RAWG API** com integração ao **Firebase**. Disponível como aplicação **web** (React + Vite) e **mobile** (React Native + Expo).
 
 ---
 
-## ✨ Destaques
+## 🔗 Acesso
 
-- Home com seções de jogos em alta.
-- Busca com filtros (gênero, plataforma e ordenação).
-- Página completa de detalhes com estatísticas e screenshots.
-- Layout responsivo com sidebar, header e footer refinados.
-- Skeleton loading para carregamento visualmente agradável.
+| Plataforma | Link |
+|---|---|
+| Web | **https://game-dex-theta.vercel.app** |
+| APK Android | **[Download APK](https://expo.dev/artifacts/eas/eu23AZcRw258trhDoVVZrh.apk)** |
 
 ---
 
 ## 🚀 Funcionalidades
 
-### Home (`/`)
-- Seções: **Trending Games**, **Top Rated** e **Lançamentos**.
-- Cards com animações e microinterações.
+### Web (`src/`)
 
-### Busca (`/search`)
-- Pesquisa por nome.
-- Filtro por gênero.
-- Filtro por plataforma.
-- Ordenação por relevância, nota, data e popularidade.
+- **Home** (`/`) — jogos em alta, top rated e lançamentos
+- **Busca** (`/search`) — pesquisa por nome, filtro por gênero, plataforma e ordenação
+- **Detalhes** (`/game/:id`) — capa, nota, Metacritic, descrição, screenshots e informações completas
+- **Biblioteca** (`/library`) — biblioteca pessoal com status e favoritos (requer login)
+- **Sobre** (`/about`) — visão do projeto e stack
+- **App** (`/download`) — link para download do APK mobile
 
-### Detalhes (`/game/:id`)
-- Banner/capa do jogo.
-- Nota, Metacritic, tempo médio e avaliações.
-- Bloco de descrição.
-- Informações organizadas (dev, publicadora, classificação etc.).
-- Grid de screenshots.
+### Mobile (`mobile/`)
 
-### Outras páginas
-- **Sobre** (`/about`) com visão do projeto e stack.
-- **App** (`/download`) com download de APK e link do repositório.
+- **Home** — jogos em alta carregados da RAWG API
+- **Busca** — pesquisa por nome em tempo real
+- **Detalhes do jogo** — capa, nota, gêneros, plataformas, descrição, botões de salvar e favoritar
+- **Biblioteca** — biblioteca pessoal com troca de status e favoritos
+- **Perfil** — login com email/senha ou Google, edição de nickname e bio
 
 ---
 
 ## 🧱 Stack Técnica
 
-| Camada | Tecnologias |
+### Web
+
+| Camada | Tecnologia |
 |---|---|
-| Front-end | React 19, React Router DOM |
+| Frontend | React 19, React Router DOM |
 | Build | Vite 7 |
-| Estilo/UI | CSS custom + Tailwind CSS (plugin Vite) |
+| Estilo/UI | CSS custom + Tailwind CSS |
 | Animações | Framer Motion |
 | Requisições | Axios |
-| Backend | Vercel Functions (Node.js) |
+| Backend | Vercel Serverless Functions (Node.js) |
 | Banco/Auth | Firebase (Firestore + Firebase Auth) |
 | Ícones | React Icons |
 
+### Mobile
+
+| Camada | Tecnologia |
+|---|---|
+| Framework | React Native (Expo SDK 54) |
+| Navegação | React Navigation (Native Stack + Bottom Tabs) |
+| Autenticação | Firebase Auth (firebase ^12) |
+| OAuth Google | expo-auth-session + expo-web-browser |
+| Requisições | Axios |
+| Backend | Vercel Serverless Functions (compartilhado com web) |
+| Build/Deploy | EAS Build (Expo Application Services) |
+
 ---
 
-## 🔌 API
+## 🔌 APIs utilizadas
 
-- API: **RAWG Video Games Database**
-- Docs: https://rawg.io/apidocs
+- **RAWG Video Games Database** — https://rawg.io/apidocs
+  - `GET /games` — listagem e busca
+  - `GET /games?search=...` — busca por nome
+  - `GET /games/{id}` — detalhes do jogo
+  - `GET /games/{id}/screenshots` — screenshots
+  - `GET /genres` — lista de gêneros
+  - `GET /platforms/lists/parents` — lista de plataformas
 
-### Endpoints usados
-
-- `GET /games`
-- `GET /games?search=...`
-- `GET /games/{id}`
-- `GET /games/{id}/screenshots`
-- `GET /genres`
-- `GET /platforms/lists/parents`
+- **Backend próprio** (`https://game-dex-theta.vercel.app/api`)
+  - `GET /api/health` — status da API
+  - `GET /api/library` — biblioteca do usuário autenticado
+  - `POST /api/library` — salvar/atualizar jogo na biblioteca
+  - `DELETE /api/library?gameId=ID` — remover jogo
+  - `GET /api/profile` — perfil do usuário
+  - `POST /api/profile` — atualizar nickname e bio
 
 ---
 
 ## ⚙️ Como rodar localmente
 
-### 1) Instalar dependências
+### Web
+
+#### 1) Instalar dependências
 
 ```bash
 npm install
 ```
 
-### 2) Configurar variável de ambiente
+#### 2) Configurar variáveis de ambiente
 
-Crie um arquivo `.env` na raiz:
+Crie `.env` na raiz do projeto:
 
 ```env
 VITE_RAWG_API_KEY=sua_chave_rawg
 VITE_API_BASE_URL=http://localhost:5173/api
 
-# Firebase Web (frontend)
+# Firebase Web
 VITE_FIREBASE_API_KEY=sua_firebase_api_key
 VITE_FIREBASE_AUTH_DOMAIN=seu-projeto.firebaseapp.com
 VITE_FIREBASE_PROJECT_ID=seu_project_id
@@ -94,60 +109,107 @@ VITE_FIREBASE_STORAGE_BUCKET=seu-projeto.firebasestorage.app
 VITE_FIREBASE_MESSAGING_SENDER_ID=1234567890
 VITE_FIREBASE_APP_ID=1:1234567890:web:abcdef123456
 
-# Backend (Vercel/Firebase Admin)
+# Backend (Firebase Admin)
 FIREBASE_PROJECT_ID=seu_project_id
-FIREBASE_CLIENT_EMAIL=firebase-adminsdk-xxxxx@seu-projeto.iam.gserviceaccount.com
-FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nSUA_CHAVE_AQUI\n-----END PRIVATE KEY-----\n"
+FIREBASE_CLIENT_EMAIL=firebase-adminsdk@seu-projeto.iam.gserviceaccount.com
+FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nSUA_CHAVE\n-----END PRIVATE KEY-----\n"
 ```
 
-### 3) Rodar em desenvolvimento
+#### 3) Rodar em desenvolvimento
 
 ```bash
 npm run dev
 ```
 
-### 4) Build de produção
+#### 4) Build de produção
 
 ```bash
 npm run build
 ```
 
-### 5) Pré-visualizar build
-
-```bash
-npm run preview
-```
-
 ---
 
-## 📜 Scripts
+### Mobile
 
-- `npm run dev` → inicia ambiente de desenvolvimento.
-- `npm run build` → gera versão de produção.
-- `npm run preview` → visualiza build local.
-- `npm run lint` → executa lint do projeto.
+#### Pré-requisitos
+
+- Node.js 18+
+- Aplicativo **Expo Go** no celular
+
+#### 1) Instalar dependências
+
+```bash
+cd mobile
+npm install
+```
+
+#### 2) Configurar variáveis de ambiente
+
+Crie `mobile/.env`:
+
+```env
+EXPO_PUBLIC_RAWG_API_KEY=sua_chave_rawg
+EXPO_PUBLIC_API_BASE_URL=https://game-dex-theta.vercel.app/api
+
+EXPO_PUBLIC_FIREBASE_API_KEY=sua_firebase_api_key
+EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN=seu-projeto.firebaseapp.com
+EXPO_PUBLIC_FIREBASE_PROJECT_ID=seu_project_id
+EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET=seu-projeto.firebasestorage.app
+EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=123456789
+EXPO_PUBLIC_FIREBASE_APP_ID=1:123456789:android:abcdef
+
+EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID=seu_web_client_id
+```
+
+#### 3) Rodar em desenvolvimento
+
+```bash
+cd mobile
+npx expo start
+```
+
+Escaneie o QR Code com o **Expo Go** ou pressione `a` para abrir no emulador Android.
+
+#### 4) Gerar APK
+
+```bash
+cd mobile
+npx eas-cli build --platform android --profile preview
+```
 
 ---
 
 ## 📁 Estrutura do Projeto
 
-```text
-src/
-  assets/
-  components/
-  pages/
-  services/
-  App.jsx
-  App.css
-  index.css
-
-api/
-  _lib/
-    firebaseAdmin.js
-    http.js
-  health.js
-  favorites.js
-  library.js
+```
+GameDex/
+├── src/                        # Código-fonte Web
+│   ├── components/             # Layout, GameCard, FeedbackState
+│   ├── pages/                  # Home, Search, GameDetails, Library, About, Download
+│   ├── services/               # rawgApi.js, backendApi.js
+│   ├── lib/                    # utils.js
+│   └── App.jsx
+│
+├── api/                        # Backend Serverless (Vercel)
+│   ├── _lib/                   # firebaseAdmin.js, http.js
+│   ├── health.js
+│   ├── library.js
+│   └── profile.js
+│
+├── mobile/                     # Código-fonte Mobile
+│   ├── App.js                  # Ponto de entrada e navegação
+│   ├── app.json                # Configuração Expo
+│   ├── eas.json                # Configuração EAS Build
+│   └── src/
+│       ├── screens/            # Home, Search, GameDetails, Library, Profile
+│       ├── components/         # GameItem
+│       ├── context/            # AuthContext (Firebase Auth)
+│       ├── services/           # rawgApi.js, backendApi.js
+│       ├── config/             # env.js
+│       └── lib/                # gameLibrary.js
+│
+└── docs/
+    └── screenshots/            # Prints da aplicação
 ```
 
 ---
@@ -155,139 +217,103 @@ api/
 ## 🏗️ Arquitetura da Aplicação
 
 ```mermaid
-flowchart LR
-  U[Usuário] --> R[React + React Router]
-  R --> P[Pages]
-  P --> C[Components]
-  P --> S[rawgApi service]
-  S --> A[RAWG API]
-  R --> ST[App.css / index.css]
+flowchart TD
+    UserWeb["👤 Usuário (Web)"]
+    UserMobile["📱 Usuário (Mobile)"]
 
-  subgraph Frontend
-    R
-    P
-    C
-    S
-    ST
-  end
+    subgraph Web ["Web — React + Vite"]
+        Pages["Pages\nHome / Search / GameDetails / Library / About"]
+        Components["Components\nLayout / GameCard / FeedbackState"]
+        WebApi["services/rawgApi.js\nservices/backendApi.js"]
+    end
+
+    subgraph Mobile ["Mobile — React Native + Expo"]
+        Screens["Screens\nHome / Search / GameDetails / Library / Profile"]
+        AuthCtx["AuthContext\nFirebase Auth"]
+        MobileApi["services/rawgApi.js\nservices/backendApi.js"]
+    end
+
+    RAWG["🌐 RAWG API\nrawg.io/apidocs"]
+
+    subgraph Backend ["Backend — Vercel Serverless (api/)"]
+        Functions["health / library / profile\nFirebase Admin SDK"]
+    end
+
+    subgraph Firebase ["🔥 Firebase — Google Cloud"]
+        Auth["Firebase Auth\nemail/senha + Google"]
+        Firestore["Firestore\nbiblioteca / perfil"]
+    end
+
+    UserWeb --> Web
+    UserMobile --> Mobile
+
+    WebApi -->|GET /games| RAWG
+    MobileApi -->|GET /games| RAWG
+
+    WebApi -->|Bearer Token| Backend
+    MobileApi -->|Bearer Token| Backend
+
+    Backend --> Firebase
+    Auth --> AuthCtx
 ```
 
 ---
 
 ## 🖼️ Prints da Aplicação
 
-> Dica: salve as imagens em `docs/screenshots/` e atualize os caminhos abaixo.
+### Web — Home
+![Home Web](docs/screenshots/home.png)
 
-### Home
-![Home](docs/screenshots/home.png)
+### Web — Busca
+![Busca Web](docs/screenshots/search.png)
 
-### Busca
-![Busca](docs/screenshots/search.png)
+### Web — Detalhes do Jogo
+![Detalhes Web](docs/screenshots/details.png)
 
-### Detalhes do jogo
-![Detalhes](docs/screenshots/details.png)
+### Web — Sobre
+![Sobre Web](docs/screenshots/about.png)
 
-### Sobre
-![Sobre](docs/screenshots/about.png)
+### Web — Download do App
+![Download Web](docs/screenshots/download.png)
 
-### App
-![App](docs/screenshots/download.png)
+### Mobile — Home
+![Home Mobile](docs/screenshots/mobile-home.png)
+
+### Mobile — Busca
+![Busca Mobile](docs/screenshots/mobile-search.png)
+
+### Mobile — Detalhes do Jogo
+![Detalhes Mobile](docs/screenshots/mobile-details.png)
+
+### Mobile — Biblioteca
+![Biblioteca Mobile](docs/screenshots/mobile-library.png)
+
+### Mobile — Perfil / Login
+![Perfil Mobile](docs/screenshots/mobile-profile.png)
+
+> Salve os prints do app mobile em `docs/screenshots/` com os nomes `mobile-*.png`.
 
 ---
 
-## 🔗 Acesso Online
+## 🔐 Integração com Firebase
 
-- URL da aplicação: **https://SEU-LINK-DE-DEPLOY-AQUI**
+- **Firebase Auth** — autenticação com email/senha e Google OAuth (web e mobile)
+- **Firestore** — armazenamento de biblioteca pessoal e perfil do usuário
+- O token Firebase é enviado no header `Authorization: Bearer <token>` para o backend, que valida via Firebase Admin SDK
+
+---
+
+## 🌐 Deploy (Web)
+
+1. Suba o repositório para o GitHub
+2. No painel da **Vercel**, importe o repositório
+3. Configure as variáveis de ambiente (`VITE_RAWG_API_KEY`, `FIREBASE_*`)
+4. Build Command: `npm run build` / Output: `dist`
+5. O `vercel.json` já inclui rewrite para o React Router funcionar sem quebrar rotas
 
 ---
 
 ## 📝 Observações
 
-- O projeto depende da variável `VITE_RAWG_API_KEY`.
-- Sem chave válida, os dados da API não serão carregados.
-
----
-
-## 🌐 Deploy
-
-Plataformas recomendadas:
-
-- Vercel
-- Netlify
-
-### Deploy na Vercel (front + backend)
-
-1. Suba o repositório para o GitHub.
-2. No painel da Vercel, clique em **Add New > Project**.
-3. Importe o repositório `GameDex`.
-4. Em **Build and Output Settings**, mantenha:
-
-- Build Command: `npm run build`
-- Output Directory: `dist`
-
-5. Em **Environment Variables**, adicione:
-
-- `VITE_RAWG_API_KEY`
-- `VITE_API_BASE_URL` (em produção use `/api`)
-- `FIREBASE_PROJECT_ID`
-- `FIREBASE_CLIENT_EMAIL`
-- `FIREBASE_PRIVATE_KEY`
-
-6. Faça o deploy.
-
-O arquivo `vercel.json` deste projeto ja inclui rewrite para SPA com React Router sem quebrar as rotas.
-
-## 🔐 Backend Firebase
-
-O backend foi criado em funcoes serverless dentro da pasta `api/`:
-
-- `GET /api/health` -> status da API
-- `GET /api/favorites` -> lista favoritos do usuario autenticado
-- `POST /api/favorites` -> salva/atualiza favorito
-- `DELETE /api/favorites?gameId=ID` -> remove favorito
-- `GET /api/library` -> lista biblioteca completa do usuario
-- `POST /api/library` -> salva status, favorito e observacoes
-- `DELETE /api/library?gameId=ID` -> remove item da biblioteca
-
-## 👤 Login e Biblioteca
-
-O frontend agora suporta login com Google via Firebase Auth e uma biblioteca pessoal de jogos.
-
-### O que o usuario pode fazer
-
-- Entrar com Google
-- Favoritar jogos
-- Marcar status: `Quero jogar`, `Jogando`, `Completado`, `Pausado`, `Abandonado`
-- Adicionar observacoes pessoais
-- Ver tudo na rota `/library`
-
-### Configuracao no Firebase Console
-
-1. Crie um app Web no projeto Firebase.
-2. Copie as credenciais do SDK Web para as variaveis `VITE_FIREBASE_*`.
-3. Em **Authentication > Sign-in method**, habilite **Google**.
-4. Em **Authentication > Settings > Authorized domains**, adicione seu dominio da Vercel.
-
-### Como autenticar no backend
-
-1. No frontend (web ou React Native), autentique o usuario via Firebase Auth.
-2. Pegue o ID Token do usuario logado.
-3. Envie no header:
-
-```http
-Authorization: Bearer SEU_ID_TOKEN
-```
-
-### Exemplo de payload do POST /api/favorites
-
-```json
-{
-  "gameId": 3328,
-  "title": "The Witcher 3: Wild Hunt",
-  "coverUrl": "https://...",
-  "rating": 4.67,
-  "released": "2015-05-18",
-  "platforms": ["PC", "PlayStation", "Xbox"]
-}
-```
-
+- Sem `VITE_RAWG_API_KEY` (web) ou `EXPO_PUBLIC_RAWG_API_KEY` (mobile), os jogos não carregam
+- O login com Google no mobile requer o SHA-1 da keystore registrado no Google Cloud Console OAuth
