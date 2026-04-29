@@ -388,8 +388,6 @@ graph TD
 ### Perfil / Login
 ![Perfil](../docs/screenshots/mobile-profile.png)
 
-> **Nota:** tire os prints do APK instalado e salve em `docs/screenshots/` com os nomes acima.
-
 ---
 
 ## 📲 Download do APK
