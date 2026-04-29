@@ -44,7 +44,6 @@ Sincronize sua biblioteca entre web e mobile em tempo real via **Firebase**, des
 
 ### Profile Screen
 - Login com email/senha (Firebase Auth)
-- Login com Google OAuth
 - Exibição de perfil do usuário
 - Edição de nickname e bio
 - Logout
@@ -62,7 +61,6 @@ Sincronize sua biblioteca entre web e mobile em tempo real via **Firebase**, des
 | **Autenticação** | Firebase Auth | 12.12.0 |
 | **Banco de Dados** | Cloud Firestore | 12.12.0 |
 | **Armazenamento Local** | AsyncStorage | 2.2.0 |
-| **OAuth/Web Browser** | expo-auth-session + expo-web-browser | 7.0.11 + 15.0.11 |
 | **Gradientes** | expo-linear-gradient | 15.0.8 |
 | **Segurança** | expo-crypto | 15.0.9 |
 | **Build/Deploy** | EAS Build (Expo Application Services) | — |
@@ -79,7 +77,7 @@ Sincronize sua biblioteca entre web e mobile em tempo real via **Firebase**, des
 - `GET /platforms` — lista de plataformas
 
 ### Firebase (Google Cloud)
-- **Firebase Auth** — autenticação com email/senha e Google OAuth
+- **Firebase Auth** — autenticação com email/senha
 - **Cloud Firestore** — armazenamento de biblioteca pessoal e perfil
 
 ### Backend Próprio (Vercel Serverless Functions)
@@ -120,10 +118,6 @@ EXPO_PUBLIC_FIREBASE_PROJECT_ID=seu_project_id
 EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET=seu-projeto.firebasestorage.app
 EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=123456789
 EXPO_PUBLIC_FIREBASE_APP_ID=1:123456789:android:abcdef
-
-# Google OAuth (opcional)
-EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID=seu_web_client_id
-EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID=seu_android_client_id
 ```
 
 ### 3) Rodar em desenvolvimento
@@ -196,8 +190,8 @@ EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET=seu-projeto.firebasestorage.app
 EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=seu_sender_id
 EXPO_PUBLIC_FIREBASE_APP_ID=seu_app_id
 
-# Google OAuth (obrigatório para login com Google)
-EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID=seu_web_client_id
+
+> **Nota**: Obtenha essas credenciais no Firebase Console em Project Settings.
 ```
 
 > **Nota**: Obtenha essas credenciais no Firebase Console (Project Settings) e Google Cloud Console.
@@ -410,7 +404,7 @@ Baixe a versão mais recente do APK:
 
 O app usa o Firebase para:
 
-1. **Firebase Auth** — login com email/senha e Google OAuth
+1. **Firebase Auth** — login com email/senha
 2. **Firestore** (via backend) — armazenamento da biblioteca e perfil do usuário
 3. **Token de Autenticação** — token Firebase enviado no header `Authorization: Bearer <token>` em todas as requisições ao backend
 
@@ -426,7 +420,6 @@ O backend valida o token via **Firebase Admin SDK** antes de processar qualquer 
 | "Unterminated regular expression" | Procurar strings regex quebradas ou comentários mal fechados no código |
 | APK não instala | Desinstalar versão anterior ou usar `adb install -r` para forçar reinstalação |
 | Firebase não carrega dados | Verificar variáveis de ambiente `.env` e regras de segurança Firestore |
-| Login com Google falha | Verificar SHA-1 do keystore no Firebase Console e Google Cloud Console |
 | Memória insuficiente ao rodar | Aumentar heap: `NODE_OPTIONS=--max-old-space-size=2048 expo start` |
 | Gradle build falha | Limpar cache Android: `cd android && ./gradlew clean && cd ..` |
 | Mudanças de código não refletem | Usar `expo start --clear` para limpar cache |

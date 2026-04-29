@@ -5,6 +5,7 @@ import {
   getReactNativePersistence,
   initializeAuth,
 } from 'firebase/auth'
+import { getFirestore } from 'firebase/firestore'
 import { ENV, requireEnv } from '../config/env'
 
 export function isFirebaseConfigured() {
@@ -43,4 +44,9 @@ export function getFirebaseAuth() {
   } catch {
     return getAuth(app)
   }
+}
+
+export function getFirebaseDb() {
+  const app = getFirebaseApp()
+  return getFirestore(app)
 }

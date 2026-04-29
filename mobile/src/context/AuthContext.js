@@ -1,9 +1,7 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import {
   createUserWithEmailAndPassword,
-  GoogleAuthProvider,
   onAuthStateChanged,
-  signInWithCredential,
   signInWithEmailAndPassword,
   signOut,
   updateProfile,
@@ -23,10 +21,9 @@ function toFirebaseMessage(error, fallbackMessage) {
   if (code === 'auth/wrong-password') return 'Senha incorreta.'
   if (code === 'auth/email-already-in-use') return 'Este email ja esta em uso.'
   if (code === 'auth/weak-password') return 'Senha fraca. Use pelo menos 6 caracteres.'
-  if (code === 'auth/operation-not-allowed') return 'Metodo desativado no Firebase. Ative Email/Senha e Google em Authentication > Sign-in method.'
+  if (code === 'auth/operation-not-allowed') return 'Metodo desativado no Firebase. Ative Email/Senha em Authentication > Sign-in method.'
   if (code === 'auth/too-many-requests') return 'Muitas tentativas. Aguarde alguns minutos e tente novamente.'
   if (code === 'auth/network-request-failed') return 'Falha de rede. Tente novamente.'
-  if (code === 'auth/popup-closed-by-user') return 'Login com Google cancelado.'
 
   return fallbackMessage
 }
@@ -98,28 +95,6 @@ export function AuthProvider({ children }) {
     }
   }
 
-  async function loginWithGoogleIdToken(idToken) {
-    if (!firebaseEnabled || !auth) {
-      setError('Login com Google indisponivel: Firebase nao configurado neste build.')
-      return
-    }
-
-    if (!idToken) {
-      setError('Nao foi possivel validar sua conta Google.')
-      return
-    }
-
-    try {
-      setError('')
-      const credential = GoogleAuthProvider.credential(idToken)
-      await signInWithCredential(auth, credential)
-    } catch (googleError) {
-      console.error(googleError)
-      setError(toFirebaseMessage(googleError, 'Falha no login com Google.'))
-      throw googleError
-    }
-  }
-
   async function logout() {
     if (!firebaseEnabled || !auth) return
 
@@ -133,7 +108,6 @@ export function AuthProvider({ children }) {
     login,
     register,
     logout,
-    loginWithGoogleIdToken,
   }), [user, ready, error])
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
