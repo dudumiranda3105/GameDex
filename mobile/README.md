@@ -374,19 +374,19 @@ graph TD
 ## 🖼️ Prints da Aplicação
 
 ### Home
-![Home](../docs/screenshots/mobile-home.png)
+![Home](../docs/screenshots/mobile-home.jpg)
 
 ### Busca
-![Busca](../docs/screenshots/mobile-search.png)
+![Busca](../docs/screenshots/mobile-search.jpg)
 
 ### Detalhes do Jogo
-![Detalhes](../docs/screenshots/mobile-details.png)
+![Detalhes](../docs/screenshots/mobile-details.jpg)
 
 ### Biblioteca
-![Biblioteca](../docs/screenshots/mobile-library.png)
+![Biblioteca](../docs/screenshots/mobile-library.jpg)
 
 ### Perfil / Login
-![Perfil](../docs/screenshots/mobile-profile.png)
+![Perfil](../docs/screenshots/mobile-profile.jpg)
 
 ---
 
