@@ -9,7 +9,7 @@
 | Plataforma | Tecnologia | Link |
 |---|---|---|
 | **Web** | React + Vite | 🔗 https://game-dex-dudumiranda3105s-projects.vercel.app |
-| **APK Android** | React Native + Expo | 📥 [Download APK Pronto](https://expo.dev/artifacts/eas/fuVowPQ9T5WqaXW1lYpWFG.apk) |
+| **APK Android** | React Native + Expo | 📥 [Download APK Pronto](https://expo.dev/artifacts/eas/gYrtyRimeqWvPogk2BBpih.apk) |
 
 ---
 

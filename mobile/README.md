@@ -10,7 +10,7 @@ Sincronize sua biblioteca entre web e mobile em tempo real via **Firebase**, des
 
 | Item | Link |
 |---|---|
-| **APK Android** | 📥 [Download APK Pronto](https://expo.dev/artifacts/eas/fuVowPQ9T5WqaXW1lYpWFG.apk) |
+| **APK Android** | 📥 [Download APK Pronto](https://expo.dev/artifacts/eas/gYrtyRimeqWvPogk2BBpih.apk) |
 | **Código-fonte** | 🔗 [GitHub GameDex](https://github.com/dudumiranda3105/GameDex) |
 | **Documentação Completa** | 📚 [README Principal](../README.md) |
 
